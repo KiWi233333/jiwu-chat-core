@@ -15,23 +15,28 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-echo ">>> 构建并启动全部服务（MySQL / Redis / RabbitMQ / 后端 API / 前端 Web）..."
-docker compose up -d --build
+echo ">>> 构建并启动全部服务（MySQL / Redis / RabbitMQ / 应用单包）..."
+if ! docker compose up -d --build; then
+  echo ""
+  echo "错误：拉取或启动镜像失败。若报错含 registry-1.docker.io 或 EOF，多为网络无法访问 Docker Hub。"
+  echo "建议：在 OrbStack/Docker 中配置镜像加速（如 https://docker.1ms.run 等），或使用代理后重试。"
+  exit 1
+fi
 echo ""
-echo ">>> 等待后端就绪（约 30–60 秒）..."
-for i in $(seq 1 30); do
+echo ">>> 等待应用就绪（约 40–90 秒）..."
+for i in $(seq 1 35); do
   if curl -sf http://localhost:9090/doc.html >/dev/null 2>&1; then
-    echo ">>> 后端已就绪"
+    echo ">>> 应用已就绪"
     break
   fi
-  echo "    等待中... ($i/30)"
+  echo "    等待中... ($i/35)"
   sleep 3
 done
 echo ""
 echo ">>> 访问地址："
-echo "    前端（Web）：  http://localhost:3000"
-echo "    后端 API：     http://localhost:9090"
-echo "    API 文档：     http://localhost:9090/doc.html"
-echo "    WebSocket：    ws://localhost:9091/ws"
+echo "    前端（npx serve）： http://localhost:3000"
+echo "    后端 API：         http://localhost:9090"
+echo "    API 文档：         http://localhost:9090/doc.html"
+echo "    WebSocket：        ws://localhost:9091/ws"
 echo ""
 echo ">>> 停止：docker compose down"

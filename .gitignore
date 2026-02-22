@@ -78,6 +78,7 @@ yarn-error.log*
 .cache/
 .output/
 dist/
+dist-docker/
 *.tsbuildinfo
 
 # Tauri / Rust（根下一般无，保留便于在子目录外也能忽略）

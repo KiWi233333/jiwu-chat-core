@@ -1,7 +1,6 @@
-# JiwuChat 一键整体启动（前后端单包：前端 npx serve .output/public，后端 Spring Boot）
-# 使用：docker compose up -d --build
+# JiwuChat 发布整合包 - 仅拉取单镜像，无需构建（前端 npx serve，后端 Spring Boot）
+# 使用：cp .env.example .env 并填写 JIWU_CHAT_IMAGE 后，执行 ./start.sh 或 docker compose up -d
 # 访问：前端 http://localhost:3000  后端 http://localhost:9090  API 文档 http://localhost:9090/doc.html  WebSocket ws://localhost:9091/ws
-# 可选 .env：DOCKER_REGISTRY=镜像加速地址（如 docker.1ms.run）
 
 services:
   mysql:
@@ -13,7 +12,7 @@ services:
       MYSQL_DATABASE: jiwu-chat-db
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./backend/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-password}"]
       interval: 5s
@@ -62,20 +61,12 @@ services:
       - jiwu-network
 
   jiwu-chat:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-      args:
-        DOCKER_REGISTRY: ${DOCKER_REGISTRY:-docker.io}
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:9090/}
-        VITE_API_WS_BASE_URL: ${VITE_API_WS_BASE_URL:-ws://localhost:9091/ws}
-        VITE_BASE_OSS_PATH: ${VITE_BASE_OSS_PATH:-}
-    image: jiwu-chat:latest
+    image: ${JIWU_CHAT_IMAGE}
     container_name: jiwu-chat
     ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9091:9091"
+      - "${WEB_PORT:-3000}:3000"
+      - "${API_HTTP_PORT:-9090}:9090"
+      - "${API_WS_PORT:-9091}:9091"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/jiwu-chat-db?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
