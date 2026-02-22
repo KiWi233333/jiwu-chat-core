@@ -109,7 +109,7 @@ docker push registry.cn-hangzhou.aliyuncs.com/你的命名空间/jiwu-chat:v1.0.
    ./scripts/pack-docker-release.sh 1.0.0
    ```
 
-   会在 `dist-docker/` 下生成 **jiwu-chat-docker-1.0.0.zip**。
+   会在 `dist-docker/` 下生成 **jiwu-chat-core-1.0.0.zip**。
 
 3. 将 zip 分发给用户（如 GitHub Release 附件、网盘等）。
 
@@ -119,8 +119,8 @@ docker push registry.cn-hangzhou.aliyuncs.com/你的命名空间/jiwu-chat:v1.0.
 
 给用户的说明（可写在 Release 或你的文档里）：
 
-1. 解压 **jiwu-chat-docker-1.0.0.zip**
-2. 进入解压目录：`cd jiwu-chat-docker`
+1. 解压 **jiwu-chat-core-1.0.0.zip**
+2. 进入解压目录：`cd jiwu-chat-core`
 3. 复制环境配置：`cp .env.example .env`
 4. （可选）编辑 `.env`：修改 `MYSQL_ROOT_PASSWORD`、端口等，保证服务用自己的配置
 5. 启动：`chmod +x start.sh && ./start.sh`
@@ -182,7 +182,7 @@ docker push ghcr.io/YOUR_USERNAME/jiwu-chat:v1.0.0
 
 # 更新 deploy/.env.example 中 JIWU_CHAT_IMAGE=ghcr.io/YOUR_USERNAME/jiwu-chat:v1.0.0
 ./scripts/pack-docker-release.sh 1.0.0
-# 将 dist-docker/jiwu-chat-docker-1.0.0.zip 发给用户
+# 将 dist-docker/jiwu-chat-core-1.0.0.zip 发给用户
 ```
 
 完成以上步骤后，你就拥有了自己的完整镜像与发布包，用户即可用 `.env` 配置并启动自己的服务。

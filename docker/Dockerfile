@@ -1,6 +1,6 @@
 # 前后端单包：前端 SSG 用 npx serve .output/public，后端 Spring Boot
 # 构建上下文：项目根目录，例：docker build -f docker/Dockerfile .
-ARG DOCKER_REGISTRY=docker.io
+ARG DOCKER_REGISTRY=docker.1ms.run
 
 # 阶段一：后端
 FROM ${DOCKER_REGISTRY}/library/maven:3.9-eclipse-temurin-21-alpine AS backend

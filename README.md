@@ -27,7 +27,7 @@
 
 本仓库为 **Jiwu Chat Core** 单体仓库（Monorepo），包含极物聊天客户端与极物圈后端 API，前后端同仓便于本地联调与统一维护。
 
-- **前端 [JiwuChat](frontend/)**：基于 **Tauri 2** 与 **Nuxt 4** 的轻量（约 10MB）多平台聊天应用，支持桌面 / Web / 移动端；具备实时消息、AI 群聊机器人（讯飞星火、Kimi、DeepSeek、硅基流动等）、WebRTC 音视频通话与屏幕共享、深浅色主题等。
+- **前端 [JiwuChat](frontend/)**：基于 **Tauri 2** 与 **Nuxt 4** 的轻量（约 10MB）多平台聊天应用，支持桌面 / Web / 移动端；具备实时消息、AI 群聊机器人（讯飞星火、Kimi、DeepSeek、硅基流动等）、深浅色主题等。
 - **后端 [Jiwu Hub API](backend/)**：基于 **Spring Boot 3.5** 与 **Java 21** 的后端服务，提供用户与系统管理、资源管理、账单钱包，以及基于 **Netty WebSocket** 的实时聊天能力，可与本仓库前端或其他客户端配合使用。
 
 一套代码多端适配，前后端分离便于扩展与二次开发。
@@ -102,7 +102,7 @@ curl -fsSL https://raw.githubusercontent.com/KiWi233333/jiwu-chat-core/main/depl
 **3. 部署**
 
 ```bash
-cd jiwu-chat-docker && docker compose up -d
+cd jiwu-chat-core && docker compose up -d
 ```
 
 等待约 1–2 分钟（MySQL 初始化）后访问：前端 http://localhost:3000 · API http://localhost:9090 · 文档 http://localhost:9090/doc.html。默认账号 `superAdmin` / `123456`。
@@ -226,11 +226,9 @@ pnpm run dev:tauri   # 桌面开发
 | AI 模块    | 对话功能   | 私聊 AI、群聊 AI、多 AI 同时聊天                                          | ✅       |
 |            | 模型管理   | 支持 Gmini、Kimi AI、DeepSeek、硅基流动等多厂商模型、模型列表、token 计算 | ✅       |
 |            | 广场功能   | AI 机器人广场展示                                                         | ✅       |
-| 通讯模块   | 音视频通话 | 基于 WebRTC 的语音通话、视频通话、屏幕共享                                | ✅       |
-|            | 通话记录   | 通话状态更新、挂断记录                                                    | ✅       |
 | 通知系统   | 消息通知   | 桌面通知、系统托盘提醒、铃声设置、消息免打扰                              | ✅       |
-| 扩展功能   | 综合集成   | 商城集成、博客集成、更新日志面板                                          | ✅       |
-| 其他模块   | 其他功能   | 聊天社交功能、AI 购物功能、文件下载管理、翻译工具（AI 翻译/腾讯翻译）     | ✅       |
+| 扩展功能   | 综合集成   | 博客集成、更新日志面板                                                    | ✅       |
+| 其他模块   | 其他功能   | 聊天社交功能、文件下载管理、翻译工具（AI 翻译/腾讯翻译）                  | ✅       |
 |            | 文件与播放 | 图片预览器、视频播放器、文件下载、批量图片上传                            | ✅       |
 |            | 主题配置   | 深浅色主题切换、系统主题跟随、字体设置、自适应布局                        | ✅       |
 |            | 平台兼容   | Windows、macOS、Linux、Android、Web 端适配                                | ✅       |

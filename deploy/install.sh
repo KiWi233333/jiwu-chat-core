@@ -4,7 +4,7 @@
 set -e
 BASE_URL="${JIWU_INSTALL_BASE_URL:-https://raw.githubusercontent.com/KiWi233333/jiwu-chat-core/main}"
 TAG="${1:-latest}"
-DIR="jiwu-chat-docker"
+DIR="jiwu-chat-core"
 
 mkdir -p "$DIR/initdb.d" "$DIR/docker"
 curl -fsSL -o "$DIR/docker-compose.yml" "$BASE_URL/deploy/docker-compose.yml"

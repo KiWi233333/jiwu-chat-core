@@ -1,6 +1,6 @@
 # RabbitMQ 3.13 并启用延迟消息插件（x-delayed-message），供 OSS 延迟删除等使用
 # 构建时传入 DOCKER_REGISTRY 可走镜像加速，如 docker.1ms.run
-ARG DOCKER_REGISTRY=docker.io
+ARG DOCKER_REGISTRY=docker.1ms.run
 FROM ${DOCKER_REGISTRY}/library/rabbitmq:3.13-management
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \

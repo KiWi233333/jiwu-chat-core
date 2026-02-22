@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 DEPLOY="$ROOT/deploy"
 OUT="$ROOT/dist-docker"
-NAME="jiwu-chat-docker"
+NAME="jiwu-chat-core"
 VERSION="${1:-latest}"
 
 echo ">>> 准备发布包目录..."

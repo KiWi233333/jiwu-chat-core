@@ -36,7 +36,7 @@ JIWU_CHAT_IMAGE=ghcr.io/KiWi233333/jiwu-chat:v1.0.0
 # 例如：./scripts/pack-docker-release.sh 1.0.0
 ```
 
-会在 `dist-docker/` 下生成 `jiwu-chat-docker-<版本号>.zip`（未传版本号则为 `latest`）。
+会在 `dist-docker/` 下生成 `jiwu-chat-core-<版本号>.zip`（未传版本号则为 `latest`）。
 
 发布包内容：
 
@@ -48,7 +48,7 @@ JIWU_CHAT_IMAGE=ghcr.io/KiWi233333/jiwu-chat:v1.0.0
 
 ## 发布给用户
 
-1. 将 `dist-docker/jiwu-chat-docker-<版本>.zip` 作为 GitHub Release 附件或其它渠道分发。
+1. 将 `dist-docker/jiwu-chat-core-<版本>.zip` 作为 GitHub Release 附件或其它渠道分发。
 2. 用户说明（可写在 Release 说明或主站）：
    - 解压 zip
    - `cp .env.example .env`（如需改端口或镜像加速再编辑 .env）

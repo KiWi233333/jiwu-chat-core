@@ -9,7 +9,7 @@
 | **发布包（用户直接使用）** | 已发布镜像、不想构建 | 使用 [deploy/](deploy/) 目录或发布后的 zip：解压 → `cp .env.example .env` → `./start.sh`，仅拉取单镜像。详见 [deploy/README.md](deploy/README.md)。 |
 | **源码构建（单镜像）** | 开发或未发布镜像 | 在项目根目录执行 `./scripts/docker-start.sh` 或 `docker compose up -d --build`，会构建一个应用镜像（前后端合一）。 |
 
-维护者打发布包：在根目录执行 `./scripts/pack-docker-release.sh [版本号]`，产出 `dist-docker/jiwu-chat-docker-<版本>.zip`；发布前需先构建并推送镜像，并更新 `deploy/.env.example` 中的 `JIWU_CHAT_IMAGE`。**如何构建并发布自己的完整镜像**（Docker Hub / GHCR / 自建仓库）见 [deploy/BUILD-IMAGE.md](deploy/BUILD-IMAGE.md)；发布流程概览见 [deploy/RELEASE.md](deploy/RELEASE.md)。
+维护者打发布包：在根目录执行 `./scripts/pack-docker-release.sh [版本号]`，产出 `dist-docker/jiwu-chat-core-<版本>.zip`；发布前需先构建并推送镜像，并更新 `deploy/.env.example` 中的 `JIWU_CHAT_IMAGE`。**如何构建并发布自己的完整镜像**（Docker Hub / GHCR / 自建仓库）见 [deploy/BUILD-IMAGE.md](deploy/BUILD-IMAGE.md)；发布流程概览见 [deploy/RELEASE.md](deploy/RELEASE.md)。
 
 ## 前置要求
 
