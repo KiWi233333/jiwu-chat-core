@@ -1,0 +1,122 @@
+<script lang="ts" setup>
+import { appName } from "@/constants/index";
+
+const {
+  navClass = "z-999 h-3.5rem relative left-0 top-0 flex-row-bt-c select-none gap-4 rounded-b-0 px-3 border-default-b bg-color",
+} = defineProps<{
+  navClass?: string
+}>();
+
+const setting = useSettingStore();
+const chat = useChatStore();
+const route = useRoute();
+
+async function toggleContactSearch() {
+  setting.isOpenContactSearch = !setting.isOpenContactSearch;
+  if (!setting.isOpenContactSearch)
+    return;
+  await nextTick();
+  const el = document.querySelector("#search-contact") as any;
+  if (el)
+    el?.focus();
+}
+
+const hiddenCountTip = computed(() => chat.isOpenContact || !chat.unReadCount);
+
+async function toggleContactOpen() {
+  if (route.path !== "/") {
+    await navigateTo("/");
+    return false;
+  }
+  if (chat.isOpenGroupMember) {
+    chat.isOpenGroupMember = false;
+    return false;
+  }
+  if (!chat.isOpenContact) {
+    chat.isOpenContact = true;
+    return false;
+  }
+}
+
+const getAppTitle = computed(() => {
+  if (route.path === "/")
+    return appName;
+  else if (route.path === "/friend")
+    return "联系人";
+  else if (route.path.startsWith("/user"))
+    return "";
+  else if (route.path === "/user/safe")
+    return "账号与安全";
+  else if (route.path === "/setting")
+    return "设置";
+});
+</script>
+
+<template>
+  <menu class="group min-h-6 flex-shrink-0" :class="navClass">
+    <!-- 菜单栏 -->
+    <slot name="left">
+      <div
+        class="relative z-1000 mr-a flex-row-c-c gap-1"
+        :class="!chat.isOpenContact ? 'animate-zoom-in animate-duration-200' : 'hidden'"
+        @click="toggleContactOpen"
+      >
+        <CommonIconTip
+          class="btn-primary text-5"
+          icon="i-solar:alt-arrow-left-line-duotone"
+          tip="返回"
+        />
+        <small v-show="!hiddenCountTip" class="unread-count-badge font-500">
+          {{ chat.unReadCount > 99 ? '99+' : chat.unReadCount }}
+        </small>
+      </div>
+    </slot>
+    <!-- 拖拽区域 -->
+    <div class="absolute left-0 top-0 z-0 h-full w-full flex-row-c-c" :data-tauri-drag-region="setting.isDesktop">
+      <slot name="drag-content" />
+    </div>
+    <slot name="center" :app-title="getAppTitle" />
+    <!-- 会话搜索框 -->
+    <slot name="search-contact">
+      <CommonIconTip
+        v-if="$route.path === '/' && chat.isOpenContact"
+        class="ml-a text-5"
+        icon="i-solar:magnifer-outline"
+        tip="搜索会话"
+        @click="toggleContactSearch"
+      />
+    </slot>
+    <!-- 菜单栏右侧 -->
+    <slot name="right">
+      <div class="right relative z-1 flex items-center gap-1">
+        <!-- 下载（部分端） -->
+        <BtnDownload v-if="!setting.isWeb" icon-class="block mx-1" />
+        <!-- 折叠菜单 -->
+        <MenuDots :show-arrow="false">
+          <template #btn>
+            <div>
+              <CommonIconTip
+                class="mx-1 flex-row-c-c text-5"
+                icon="i-solar:add-circle-linear"
+                tip="菜单"
+              />
+            </div>
+          </template>
+        </MenuDots>
+      </div>
+    </slot>
+  </menu>
+</template>
+
+<style lang="scss" scoped>
+.unread-count-badge {
+  --at-apply: "bg-color-2 shadow-sm !text-gray  shadow-inset text-0.7rem h-fit py-0.2em rounded-2em px-2";
+}
+@media screen and (max-width: 768px) {
+  .menus {
+    :deep(.el-button) {
+      background-color: transparent !important;
+    }
+  }
+}
+</style>

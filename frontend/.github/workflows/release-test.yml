@@ -1,0 +1,87 @@
+name: JiwuChat Test CI
+
+on:
+  # push:
+  #   # Sequence of patterns matched against refs/tags
+  #   tags:
+  #     # 测试发布
+  #     - 'v*.test'
+  workflow_dispatch:
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest # M系列芯片的mac
+            args: --target aarch64-apple-darwin
+          - platform: macos-latest # Intel芯片的mac
+            args: --target x86_64-apple-darwin
+          - platform: ubuntu-22.04 # for Tauri v1 you could replace this with ubuntu-20.04.
+            args: ""
+          - platform: windows-latest
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev libgtk-3-dev patchelf
+        # webkitgtk（libwebkit2gtk-4.0-dev） 4.0 is for Tauri v1  - webkitgtk 4.1 is for Tauri v2. 版本不同，需要安装不同的依赖。 libappindicator3-dev
+        # libgtk-3-dev 用于构建 Debian deb
+        # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
+
+      # 使用 pnpm 作为包管理器
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        id: pnpm-install
+        with:
+          version: 10.13.1
+          run_install: false
+
+      - name: Install app dependencies and build it
+        run: pnpm i && pnpm build:nuxt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          SKIP_CHECK_ENV: 1
+
+      - name: Create Release
+        uses: tauri-apps/tauri-action@v0.5.18
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+        with:
+          tagName: test-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the Test version.
+          releaseName: Test v__VERSION__
+          releaseBody: "**Version**: [${{github.ref_name}}](https://github.com/KiWi233333/jiwu-mall-chat-tauri/blob/main/.github/releasemd/${{ github.ref_name }}.md)"
+          # releaseBody: ${{ steps.read_release_body_content.outputs.release_body }}
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+          # config https://github.com/tauri-apps/tauri-action?tab=readme-ov-file#build-options
+          updaterJsonPreferNsis: true
+          updaterJsonKeepUniversal: true

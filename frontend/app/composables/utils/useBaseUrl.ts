@@ -1,0 +1,42 @@
+
+export interface EnvConfigMap {
+  VITE_API_BASE_URL: string;
+  VITE_API_WS_BASE_URL: string;
+}
+
+
+// 默认环境变量配置
+export const DefaultEnvConfigMap: EnvConfigMap = {
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  VITE_API_WS_BASE_URL: import.meta.env.VITE_API_WS_BASE_URL,
+};
+
+const savedConfig = useLocalStorage("env-config", DefaultEnvConfigMap, {
+  mergeDefaults: true,
+});
+export function getEnvConfig() {
+  return JSON.parse(JSON.stringify(savedConfig.value));
+}
+export function setEnvConfig(config: EnvConfigMap) {
+  savedConfig.value = config;
+}
+
+
+// http请求
+export const BASE_URL = savedConfig.value.VITE_API_BASE_URL;
+export const BaseUrl = savedConfig.value.VITE_API_BASE_URL;
+export const BaseUrlFont = `${savedConfig.value.VITE_API_BASE_URL}/public/font`;
+export const BaseUrlRef = computed(() => savedConfig.value.VITE_API_BASE_URL);
+
+// 图片
+export const BASE_OSS_PATH = import.meta.env.VITE_BASE_OSS_PATH;
+export const BaseUrlAppFile = BASE_OSS_PATH;
+export const BaseUrlImg = BASE_OSS_PATH;
+export const BaseUrlVideo = BASE_OSS_PATH;
+export const BaseUrlSound = BASE_OSS_PATH;
+export const BaseUrlFile = BASE_OSS_PATH;
+export const AuthKey = "Authorization";
+
+// websocket
+export const BaseWSUrl = savedConfig.value.VITE_API_WS_BASE_URL;
+export const BaseWSUrlRef = computed(() => savedConfig.value.VITE_API_WS_BASE_URL);

@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  // Auto fix
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  }
+}

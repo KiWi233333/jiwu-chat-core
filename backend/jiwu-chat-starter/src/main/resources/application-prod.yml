@@ -1,0 +1,38 @@
+# 服务器配置
+server:
+  port: ${SERVER_PORT:9090}
+
+# 未配置 SMTP 时关闭邮件健康检查，避免连 localhost:25 刷屏
+management:
+  health:
+    mail:
+      enabled: false
+
+# 数据库连接配置（敏感信息仅通过环境变量注入，默认置空）
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  # Redis配置
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:}
+      port: ${SPRING_REDIS_PORT:6379}
+      database: ${SPRING_REDIS_DATABASE:0}
+  # RabbitMQ配置
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:}
+    password: ${SPRING_RABBITMQ_PASSWORD:}
+  # 开发工具配置
+  devtools:
+    restart:
+      enabled: ${SPRING_DEVTOOLS_RESTART_ENABLED:false}
+
+    # 日志配置
+    # logging:
+    # level:
+    # com.jiwu.api: debug
+

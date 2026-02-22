@@ -1,0 +1,113 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "mobile-capability",
+  "description": "Capability for the main window",
+  "platforms": ["iOS", "android"],
+  "windows": ["*"],
+  "permissions": [
+    "core:default",
+    "core:webview:allow-internal-toggle-devtools",
+    "core:event:default",
+
+    "os:default",
+    "os:allow-os-type",
+    "os:allow-arch",
+    "os:allow-version",
+    "os:allow-hostname",
+
+    "deep-link:default",
+    "deep-link:allow-get-current",
+    "deep-link:allow-register",
+    "deep-link:allow-unregister",
+    "deep-link:allow-is-registered",
+
+    "notification:allow-is-permission-granted",
+    "notification:allow-request-permission",
+    "notification:allow-notify",
+    "notification:allow-register-action-types",
+    "notification:allow-register-listener",
+    "notification:allow-cancel",
+    "notification:allow-get-pending",
+    "notification:allow-remove-active",
+    "notification:allow-get-active",
+    "notification:allow-check-permissions",
+    "notification:allow-show",
+    "notification:allow-batch",
+    "notification:allow-list-channels",
+    "notification:allow-delete-channel",
+    "notification:allow-create-channel",
+    "notification:allow-permission-state",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "powershell",
+          "cmd": "powershell",
+          "args": true
+        },
+        {
+          "name": "systemPath",
+          "cmd": "cmd",
+          "args": [
+            "-c",
+            {
+              "validator": "\\S+"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "identifier": "fs:write-files",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:read-dirs",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:read-files",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-copy-file",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-clear"
+  ]
+}

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jiwu Hub - 新一代 AI 驱动的即时通讯平台</title>
+    <meta name="description" content="集成多模型 AI 能力与高性能实时通讯的现代化社交平台后端服务">
+    <!-- logo -->
+     <link rel="icon" href="/public/logo.png"></link>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #000000;
+            --bg-secondary: #0a0a0a;
+            --accent-primary: #4e2ce0;
+            --accent-glow: rgba(78, 44, 224, 0.4);
+            --accent-secondary: #8b5cf6;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        /* ========== ANIMATED BACKGROUND ========== */
+        .animated-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Radial Light Beams */
+        .light-beam {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--accent-primary), transparent);
+            opacity: 0.15;
+            animation: beamMove 8s linear infinite;
+        }
+
+        .beam-1 { left: 10%; animation-delay: 0s; }
+        .beam-2 { left: 30%; animation-delay: -2s; }
+        .beam-3 { left: 50%; animation-delay: -4s; }
+        .beam-4 { left: 70%; animation-delay: -6s; }
+        .beam-5 { left: 90%; animation-delay: -1s; }
+
+        @keyframes beamMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            top: 20%;
+            left: 10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-primary), transparent);
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            top: 60%;
+            right: 15%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-secondary), transparent);
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            bottom: 10%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #c084fc, transparent);
+            animation-delay: -10s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* Mesh Grid */
+        .mesh-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 40%, black 40%, transparent 100%);
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* Spotlight Effect */
+        .spotlight {
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 50% 30% at 50% 50%, rgba(78, 44, 224, 0.15), transparent);
+            pointer-events: none;
+        }
+
+        /* ========== LAYOUT ========== */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            padding: 24px 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            color: #000;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-primary);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            padding: 10px 24px;
+            background: var(--accent-primary);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            gap: 6px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            padding: 140px 0 100px;
+            text-align: center;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(78, 44, 224, 0.1);
+            border: 1px solid rgba(78, 44, 224, 0.3);
+            border-radius: 20px;
+            color: var(--accent-primary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s 0.1s backwards;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin: 0 0 32px;
+            letter-spacing: -0.04em;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            animation: fadeInUp 0.8s 0.2s backwards;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .gradient-text::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: blur(20px);
+            opacity: 0.5;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2vw, 22px);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            animation: fadeInUp 0.8s 0.3s backwards;
+        }
+
+        .hero-subtitle strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s 0.4s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-secondary {
+            padding: 12px 32px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ========== FEATURES GRID ========== */
+        .features {
+            padding: 80px 0 120px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(78, 44, 224, 0.08), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(78, 44, 224, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 20px 60px -10px rgba(78, 44, 224, 0.3);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: rgba(78, 44, 224, 0.15);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 12px;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-desc {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== TECH STACK ========== */
+        .tech-stack {
+            padding: 80px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .tech-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-weight: 600;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tech-tag {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Space Grotesk', monospace;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .tech-tag:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.3;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 16px;
+            }
+
+            .nav-link {
+                font-size: 14px;
+            }
+
+            .hero {
+                padding: 100px 0 80px;
+            }
+
+            .hero-title {
+                font-size: 48px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Animated Background -->
+        <div class="animated-bg">
+            <div class="spotlight"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="light-beam beam-1"></div>
+            <div class="light-beam beam-2"></div>
+            <div class="light-beam beam-3"></div>
+            <div class="light-beam beam-4"></div>
+            <div class="light-beam beam-5"></div>
+            <div class="mesh-grid"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Header -->
+            <header>
+                <div class="container">
+                    <div class="header-content">
+                        <a href="/" class="logo">
+                            <img src="/public/logo.png" alt="Jiwu Hub" style="width: 36px; height: 36px; border-radius: 8px;">
+                            <span>Jiwu Hub</span>
+                        </a>
+                        <nav class="nav-links">
+                            <a href="/doc.html" class="nav-link" target="_blank">文档</a>
+                            <a href="https://github.com/Kiwi233333/jiwu-mall-api" class="nav-link" target="_blank">GitHub</a>
+                            <a href="/doc.html" class="btn-primary" target="_blank">开始使用</a>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <div class="badge">
+                        <span class="badge-dot"></span>
+                        v1.0.0-SNAPSHOT Released
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        新一代 <span class="gradient-text" data-text="AI 驱动">AI 驱动</span><br>
+                        即时通讯平台
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        融合 <strong>多模型 AI</strong> 智能对话与 <strong>Netty</strong> 高性能即时通讯的企业级社交平台。<br>
+                        支持单聊、群聊与 AI 助手无缝交互。基于 <strong>Java 21</strong> 与 <strong>Spring Boot 3.5</strong> 构建。
+                    </p>
+                    
+                    <div class="hero-cta">
+                        <a href="/doc.html" class="btn-primary" target="_blank">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            查看接口文档
+                        </a>
+                        <a href="https://github.com/Kiwi233333/jiwu-mall-api" class="btn-secondary" target="_blank">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+                            </svg>
+                            源码仓库
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features">
+                <div class="container">
+                    <div class="features-grid" v-bind:ref="el => setupCardMouseEffect(el)">
+                        <div v-for="(feature, index) in features" 
+                             :key="index" 
+                             class="feature-card"
+                             @mousemove="handleMouseMove"
+                             :style="{ animationDelay: (index * 0.1) + 's' }">
+                            <div class="feature-icon" v-html="feature.icon"></div>
+                            <h3 class="feature-title">{{ feature.title }}</h3>
+                            <p class="feature-desc">{{ feature.desc }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tech Stack -->
+            <section class="tech-stack">
+                <div class="container">
+                    <p class="tech-label">Powered By Modern Tech Stack</p>
+                    <div class="tech-tags">
+                        <span v-for="tech in techStack" :key="tech" class="tech-tag">
+                            {{ tech }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                <div class="container">
+                    <div class="footer-logo">
+                        <img src="/public/logo.png" alt="Jiwu Hub" style="width: 48px; height: 48px; border-radius: 8px; opacity: 0.3;">
+                    </div>
+                    <p class="footer-text">
+                        &copy; 2024-2025 Jiwu Hub. Open Source under Apache 2.0 License.
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    features: [
+                        {
+                            title: '多模型 AI 对话',
+                            desc: '集成 Gemini、DeepSeek、Kimi、GLM 等 6 大主流 LLM，支持流式对话、上下文记忆与智能策略路由。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #4e2ce0;">
+                                <path d="M17.753 14a2.25 2.25 0 0 1 2.25 2.25v.904A3.75 3.75 0 0 1 18.696 20C17.14 21 14.907 22 12 22s-5.139-1-6.696-2a3.75 3.75 0 0 1-1.306-2.843v-.908A2.25 2.25 0 0 1 6.246 14h11.507ZM12 2.005a5 5 0 1 1 0 10a5 5 0 0 1 0-10Z"/>
+                            </svg>`
+                        },
+                        {
+                            title: '高性能即时通讯',
+                            desc: '基于 Netty 构建的百万级并发 WebSocket 引擎，支持单聊、群聊、已读回执与多端消息同步。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #8b5cf6;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h8c1.1 0 2-.9 2-2v-8c0-5.52-4.48-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8v6h-8z"/>
+                                <circle cx="8.5" cy="12" r="1.5"/>
+                                <circle cx="15.5" cy="12" r="1.5"/>
+                            </svg>`
+                        },
+                        {
+                            title: 'AI 助手集成',
+                            desc: '在聊天场景中无缝调用 AI 能力，支持 @AI 唤醒、智能问答与多轮对话上下文管理。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #a78bfa;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93c0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41c0 2.08-.8 3.97-2.1 5.39z"/>
+                            </svg>`
+                        },
+                        {
+                            title: '社交互动生态',
+                            desc: '支持好友关系、兴趣圈子、动态发布与内容分享，构建完整社交网络。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #c084fc;">
+                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                            </svg>`
+                        },
+                        {
+                            title: '模块化架构',
+                            desc: '清晰的模块化单体设计，支持聊天、AI、社区等模块独立演进与扩展。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #7c3aed;">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>`
+                        },
+                        {
+                            title: '企业级性能',
+                            desc: '采用 Java 21 虚拟线程、Redis 消息队列、多级缓存与异步处理机制，保障高并发稳定性。',
+                            icon: `<svg viewBox="0 0 24 24" fill="currentColor" style="color: #6366f1;">
+                                <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92c0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7c0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95c0 5.52 4.47 10 9.99 10c3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+                            </svg>`
+                        }
+                    ],
+                    techStack: [
+                        'Java 21',
+                        'Spring Boot 3.5.6',
+                        'LangChain4j',
+                        'Netty',
+                        'MyBatis Plus',
+                        'Redis',
+                        'RabbitMQ',
+                        'WebSocket',
+                        'Docker',
+                        'OAuth 2.0'
+                    ]
+                }
+            },
+            methods: {
+                handleMouseMove(e) {
+                    const card = e.currentTarget;
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                },
+                setupCardMouseEffect(el) {
+                    if (!el) return;
+                    const cards = el.querySelectorAll('.feature-card');
+                    cards.forEach(card => {
+                        card.addEventListener('mousemove', this.handleMouseMove);
+                    });
+                }
+            },
+            mounted() {
+                // Fade in animations on scroll
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'fadeInUp 0.8s forwards';
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.feature-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

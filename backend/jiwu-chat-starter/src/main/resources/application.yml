@@ -1,0 +1,131 @@
+spring:
+  profiles:
+    active: ${profiles.active:dev}
+  # thymeleaf配置
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  # 邮件配置（生产请通过环境变量注入，勿提交真实密码）
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:25}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.ssl.enable: false
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+# 服务器配置
+server:
+  port: 9090
+
+# Mybatis Plus配置
+mybatis-plus-join:
+  banner: false
+  ms-cache: true
+
+# XSS过滤配置
+mica:
+  xss:
+    enabled: true
+    enable-escape: false
+    mode: escape
+    path-exclude-patterns:
+    path-patterns: /**
+    pretty-print: false
+    trim-text: true
+
+# 模板配置
+emailTemplate: email/emailTemplate.html
+emailCodeTemplate: email/send_email.html
+emailSendUser: 极物圈
+
+# 七牛云配置（生产请通过环境变量注入，勿提交真实密钥）
+qi-niu-cloud:
+  access-key: ${QINIU_ACCESS_KEY:}
+  secret-key: ${QINIU_SECRET_KEY:}
+  bucket-name: ${QINIU_BUCKET:}
+  host-name: ${QINIU_HOST:}
+  sign-time-url-key: ${QINIU_SIGN_KEY:}
+  sign-time-url-key2: ${QINIU_SIGN_KEY2:}
+
+# SMS服务配置
+sms:
+  # 短信提供商，可选值: unisms, sms4j，默认为unisms
+  provider: unisms
+  # SMS4J配置
+  sms4j:
+    # 配置ID，用于获取SMS4J配置
+    configId: defaultConfig
+  # 标注从yml读取配置
+  config-type: yaml
+  blends:
+  # ali-cloud:
+  #   #阿里云的accessKey
+  #   accessKeyId: 您的accessKey
+  #   #阿里云的accessKeySecret
+  #   accessKeySecret: 您的accessKeySecret
+  #   #短信签名
+  #   signature: 测试签名
+  #   #模板ID 用于发送固定模板短信使用
+  #   templateId: SMS_215125134
+  #   #模板变量 上述模板的变量
+  #   templateName: code
+  #   #地址
+  #   requestUrl: dysmsapi.aliyuncs.com
+  #核心线程池大小
+  corePoolSize: 10
+  #最大线程数
+  maxPoolSize: 30
+  #队列容量
+  queueCapacity: 50
+  # 线程名字前缀
+  threadNamePrefix: jiwu-sms-executor-
+  #设置线程池关闭的时候等待所有任务都完成再继续销毁其他的Bean
+  shutdownStrategy: true
+  # UniSMS配置（生产请通过环境变量注入）
+  uni-sms:
+    access-key: ${UNISMS_ACCESS_KEY:}
+    secret-key: ${UNISMS_SECRET_KEY:}
+    default-templated-id: ${UNISMS_TEMPLATE_ID:}
+    signature: ${UNISMS_SIGNATURE:}
+    host-name: https://uni.apistd.com
+    webhook:
+      enabled: true
+      signature-secret: ${UNI_SMS_WEBHOOK_SIGNATURE_SECRET:}
+
+# 腾讯翻译配置（生产请通过环境变量注入）
+tencent:
+  secretId: ${TENCENT_SECRET_ID:}
+  secretKey: ${TENCENT_SECRET_KEY:}
+
+# AI 翻译（SiliconFlow，生产请通过环境变量注入密钥）
+res:
+  translation:
+    api-url: ${RES_TRANSLATION_API_URL:https://api.siliconflow.cn/v1}
+    api-key: ${RES_TRANSLATION_API_KEY:}
+    model: ${RES_TRANSLATION_MODEL:Qwen/Qwen2.5-32B-Instruct}
+    max-tokens: ${RES_TRANSLATION_MAX_TOKENS:4096}
+
+# MCP自定义配置（生产请通过环境变量注入密钥）
+mcp:
+  server:
+    allowed-key: ${MCP_ALLOWED_KEY:}
+
+# 日志配置
+logging:
+  level:
+    com.jiwu.api.mcp: DEBUG
+    root: INFO
+
+# 如需 ai-device 通信密钥，请通过环境变量注入，勿在配置中写死
+

@@ -1,0 +1,69 @@
+[package]
+name = "jiwuchat"
+version = "1.8.2"
+description = "A Tauri App"
+authors = ["Kiwi2333"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["macos-private-api",
+    "tray-icon",
+    "image-ico",
+    "rustls-tls"
+] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+url = "2"
+
+tauri-plugin-os = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-upload = "2"
+tauri-plugin-dialog = "2.6.0" 
+tauri-plugin-process = "2"
+tauri-plugin-websocket = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-deep-link = "2"
+tauri-plugin-clipboard-manager = "2"
+
+[target."cfg(any(target_os = \"android\", target_os = \"ios\"))".dependencies]
+tauri-plugin-localhost = "2"
+portpicker = "0.1"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = { version = "2.3.0", features = ["deep-link"] }
+tauri-plugin-updater = "2.9"
+tauri-plugin-deep-link = "2"
+# tauri-plugin-window-state = "2"
+    # permission// "window-state:default",
+    # // "window-state:allow-restore-state",
+    # // "window-state:allow-save-window-state",
+    # // "window-state:allow-filename",
+
+[target."cfg(target_os =\"macos\")".dependencies]
+objc2 = "0.6.3"
+objc2-app-kit = "0.3.2"
+
+[profile.dev]
+incremental = true # 以更小的步骤编译二进制文件。
+
+[profile.release]
+codegen-units = 1 # 允许LLVM进行更好的优化。
+lto = true # 启用链接时优化。
+opt-level = "s" # 优先减小二进制体积。如需更高速度可用`3`。
+panic = "abort" # 通过禁用panic处理器提升性能。
+strip = true # 确保移除调试符号。

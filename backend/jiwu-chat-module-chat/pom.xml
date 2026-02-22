@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.jiwu</groupId>
+        <artifactId>jiwu-chat-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jiwu-chat-module-chat</artifactId>
+    <name>jiwu-chat-module-chat</name>
+    <description>极物圈 - 聊天模块（WebSocket实时通信、消息管理）</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-common-data</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-module-user</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

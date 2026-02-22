@@ -1,0 +1,116 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default-capability",
+  "description": "Capability for the all window",
+  "windows": ["*"],
+  "platforms": [
+    "windows",
+    "linux",
+    "macOS",
+    "android",
+    "iOS"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "core:app:default",
+    "core:event:default",
+    "core:tray:default",
+    "core:menu:default",
+    "core:path:default",
+    "core:image:default",
+    "core:resources:default",
+    "core:webview:default",
+    "core:app:allow-version",
+    "core:event:allow-emit",
+    "core:event:allow-emit-to",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:app:allow-set-app-theme",
+    "os:default",
+    "os:allow-arch",
+    "os:allow-exe-extension",
+    "os:allow-os-type",
+    "os:allow-family",
+    "os:allow-hostname",
+    "os:allow-version",
+    "os:allow-locale",
+    "os:allow-platform",
+    "fs:default",
+    "fs:read-all",
+    "fs:allow-read",
+    "fs:read-files",
+    "fs:write-all",
+    "fs:allow-resource-read-recursive",
+    "shell:default",
+    "shell:allow-execute",
+    "shell:allow-stdin-write",
+    {
+      "identifier": "shell:allow-open",
+      "allow": [
+        {
+          "name": "*",
+          "cmd": "*",
+          "args": [
+            "*"
+          ]
+        }
+      ]
+    },
+
+    "upload:default",
+    "upload:allow-download",
+    "upload:allow-upload",
+    
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    
+    "notification:allow-is-permission-granted",
+    "notification:allow-request-permission",
+    "notification:allow-notify",
+    "notification:allow-register-action-types",
+    "notification:allow-register-listener",
+    "notification:allow-cancel",
+    "notification:allow-get-pending",
+    "notification:allow-remove-active",
+    "notification:allow-get-active",
+    "notification:allow-check-permissions",
+    "notification:allow-show",
+    "notification:allow-batch",
+    "notification:allow-list-channels",
+    "notification:allow-delete-channel",
+    "notification:allow-create-channel",
+    "notification:allow-permission-state",
+    
+    "dialog:default",
+    "dialog:allow-ask",
+    "dialog:allow-confirm",
+    "dialog:allow-message",
+    "dialog:allow-open",
+    "dialog:allow-save",
+
+    "websocket:default",
+    "websocket:allow-connect",
+    "websocket:allow-send",
+
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-clear"
+  ],
+  "local": true,
+  "remote": {
+    "urls": [
+      "https://*.kiwi2333.top",
+      "https://*.kiwi233.top"
+    ]
+  },
+  "webviews": []
+}

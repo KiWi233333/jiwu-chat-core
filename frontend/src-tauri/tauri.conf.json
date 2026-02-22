@@ -1,0 +1,51 @@
+{
+  "productName": "JiwuChat",
+  "mainBinaryName": "JiwuChat",
+  "version": "../package.json",
+  "identifier": "com.jiwuchat.app",
+  "app": {
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true,
+    "windows": [],
+    "security": {
+      "capabilities": ["default-capability", "desktop-capability", "mobile-capability"],
+      "csp": null
+    }
+  },
+  "build": {
+    "frontendDist": "../.output/public",
+    "devUrl": "http://localhost:3000/",
+    "removeUnusedCommands": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjREQTA3MkU1MzNEMzkKUldRNVBWTXVCOXIwVjlBVXhBY0J3WEVNZW5ZTWZSYXJNdlM4VmpoaXBrSDFiOU1QYk85RDBkYW0K",
+      "endpoints": ["https://api.jiwu.kiwi2333.top/res/app/latest"]
+    },
+    "deep-link": {
+      "desktop": [
+        {
+          "schemes": ["jiwuchat"]
+        }
+      ],
+      "mobile": [
+        {
+          "scheme": ["jiwuchat"],
+          "appLink": false
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "SocialNetworking",
+    "copyright": "Kiwi2333",
+    "targets": "all",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.icns", "icons/icon.ico", "icons/icon.png"],
+    "longDescription": "",
+    "licenseFile": "./LICENSE/LICENSE.txt",
+    "createUpdaterArtifacts": true,
+    "resources": ["./res/**/*"],
+    "shortDescription": ""
+  }
+}

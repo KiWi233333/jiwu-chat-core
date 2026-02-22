@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiwu.api.common.main.mapper.chat.ChatGroupMemberMapper">
+
+    <insert id="updateOrReFlush">
+        insert into chat_group_member(`group_id`, `userId`, `role`)
+        values (#{groupId}, #{userId}, #{role})
+        on DUPLICATE KEY UPDATE `role` = VALUES(`role`)
+    </insert>
+
+</mapper>

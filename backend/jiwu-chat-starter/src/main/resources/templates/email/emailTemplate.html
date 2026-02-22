@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${EmailParams.get('title')}"></title>
+</head>
+<!--主体-->
+<body>
+<section class="email_warp"
+         style="min-height: 500px; font-size: 14px; color: #212121; display: flex; justify-content: center; padding: 5rem 12px;">
+    <div id="reset-password-email">
+        <div class="logo-box" style="display: flex; justify-content: center; align-items: center; margin: 2rem 0;">
+            <img src="https://oss.jiwuchat.top/image/logo_text.png" alt="极物圈图标" class="logo" data-bit="iit"
+                 style="display: block; margin: 0 auto; width: 64vw; min-width: 200px; height: 140px; object-fit: contain; max-width: 320px; color: #ffffff; text-align: center;">
+        </div>
+        <h1 class="email-title"
+            style="font-size: 1rem; display: block; width: 100%; text-align: left; font-weight: 500; margin-bottom: 15px; color: #252525;">
+            尊敬的用户&nbsp;<span th:text="${EmailParams.get('email')}"></span>&nbsp;，您好：
+        </h1>
+        <div>
+            正在进行<strong th:text="${EmailParams.get('type')}" style="color: #5d33f6;font-size: 1.2em;"></strong>操作，收到验证码如下：
+        </div>
+        <span class="code"
+              style="display: block; width: fit-content; margin: 30px auto; font-family: Bahnschrift, SansSerif, sans-serif; box-sizing: border-box; color: #ffffff; background-color: #5d33f6; border-radius: 10px; box-shadow: 2px 2px 5px #4c69a9; backdrop-filter: blur(30px); font-weight: bold; font-size: 40px; word-spacing: 20px; text-align: center; letter-spacing: 20px; text-indent: 20px;"
+              th:text="${EmailParams.get('code')}"></span>
+        <div class="warm_tips"
+             style="color: #757575; background: #eee; padding: 20px; backdrop-filter: blur(30px); border-radius: 10px;">
+            <div class="desc" style="margin-bottom: 10px;">
+                为安全起见，以上验证码为一次性，且仅在
+                <template th:text="${EmailParams.get('minuteTime')}">5</template>
+                分钟内有效，请您尽快完成操作。
+            </div>
+            <p>如有任何疑问或无法完成，请通过如下方式与我们联系：</p>
+            <p>有问题联系邮箱：1024@kiwi2333.top</p>
+            <p>本邮件由系统自动发送，请勿回复。</p>
+        </div>
+        <div class="email-footer"
+             style="margin-top: 2em; padding-top: 2em; border-top: 1px solid rgba(217, 217, 217, 0.8); text-align: center; font-size:12px;opacity:0.8;color:#696969;text-align:left;line-height:15px;margin-bottom:50px;">
+            <a class="m_3020662069482612957footer_link" href="https://kiwi233.top" style="color:#696969!important"
+               target="_blank">我们的博客</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            <a class="m_3020662069482612957footer_link" href="https://jiwu.kiwi2333.top" style="color:#696969!important"
+               target="_blank">极物圈社区</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            <a class="m_3020662069482612957footer_link" href="https://jiwuchat.top"
+               style="color:#696969!important" target="_blank">JiwuChat</a>
+            <br><br>
+            <div>©2024 极物圈<br>保留所有权利。</div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

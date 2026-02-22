@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.jiwu</groupId>
+        <artifactId>jiwu-chat-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jiwu-chat-module-user</artifactId>
+    <name>jiwu-chat-module-user</name>
+    <description>极物圈 - 用户模块（用户、钱包、账单、地址）</description>
+
+    <dependencies>
+        <!-- 依赖 Common Core 和 Data -->
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-common-data</artifactId>
+        </dependency>
+
+        <!-- 依赖 Sys 模块 (用于 API Key 认证) -->
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-module-sys</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot AMQP (RabbitMQ) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jiwu</groupId>
+            <artifactId>jiwu-chat-module-res</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,121 @@
+# JiwuChat 一键整体启动
+# 包含：MySQL、Redis、RabbitMQ、后端 API、前端 Web
+# 使用：docker compose up -d
+# 访问：前端 http://localhost:3000  后端 API http://localhost:9090  API 文档 http://localhost:9090/doc.html  WebSocket ws://localhost:9091/ws
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: jiwu-mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: jiwu_root_pwd
+      MYSQL_DATABASE: jiwu-chat-db
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pjiwu_root_pwd"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - jiwu-network
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: jiwu-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - jiwu-network
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: jiwu-rabbitmq
+    hostname: jiwu-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: jiwu
+      RABBITMQ_DEFAULT_PASS: jiwu_pwd
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - jiwu-network
+
+  jiwu-chat-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: jiwu-chat-api:latest
+    container_name: jiwu-chat-api
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/jiwu-chat-db?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: jiwu_root_pwd
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: "6379"
+      SPRING_REDIS_DATABASE: "0"
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: jiwu
+      SPRING_RABBITMQ_PASSWORD: jiwu_pwd
+    volumes:
+      - backend-logs:/jiwu-chat/logs
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:9090/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - jiwu-network
+
+  jiwu-chat-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: "http://localhost:9090/"
+        VITE_API_WS_BASE_URL: "ws://localhost:9091/ws"
+    image: jiwu-chat-web:latest
+    container_name: jiwu-chat-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - jiwu-chat-api
+    restart: unless-stopped
+    networks:
+      - jiwu-network
+
+volumes:
+  mysql-data:
+  redis-data:
+  rabbitmq-data:
+  backend-logs:
+
+networks:
+  jiwu-network:
+    driver: bridge

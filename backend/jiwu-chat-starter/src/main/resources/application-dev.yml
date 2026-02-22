@@ -1,0 +1,42 @@
+# 服务器配置
+server:
+  port: 9090
+
+# 数据库连接配置（先执行 docker-entrypoint-initdb.d/jiwu-chat-db.sql 初始化库表）
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/jiwu-chat-db?serverTimezone=GMT%2B8}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+  # Redis配置
+  data:
+    redis:
+      port: ${SPRING_REDIS_PORT:6379}
+      database: ${SPRING_REDIS_DATABASE:0}
+      host: ${SPRING_REDIS_HOST:127.0.0.1}
+  # RabbitMQ配置
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+  # 开发工具配置
+  devtools:
+    restart:
+      enabled: false
+
+# 日志配置
+logging:
+  level:
+    com.jiwu.api: debug
+
+# 权限配置
+system:
+  permission:
+    auto-init:
+      # 是否在应用启动时自动导入新权限，默认为 true
+      enabled: ${SYSTEM_PERMISSION_AUTO_INIT_ENABLED:false}
+  auth:
+    # 是否开启ua验证
+    enable-ua-check: ${SYSTEM_AUTH_ENABLE_UA_CHECK:false}
+

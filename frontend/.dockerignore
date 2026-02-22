@@ -1,0 +1,14 @@
+node_modules
+.nuxt
+.nitro
+.output
+.cache
+dist
+*.log
+.env.*.local
+src-tauri
+.git
+.gitignore
+.docs
+.dev
+report.html

@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # Java应用服务
+  jiwu-chat-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jiwu-chat-api
+    ports:
+      - "9090:9090"  # 应用端口
+      - "9091:9091"  # WebSocket端口
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/jiwu-chat-db?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=user
+      - SPRING_RABBITMQ_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - mysql
+      - rabbitmq
+      - redis
+    restart: always
+    networks:
+      - jiwu-network
+
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: jiwu-mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+#    ports:
+#      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=jiwu-chat-db
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - jiwu-network
+
+  # RabbitMQ服务（带延迟队列插件）
+  rabbitmq:
+    image: everacostaqrvey/rabbitmq-delayed:3.13.17-3.13.0-3
+    container_name: jiwu-rabbitmq
+    hostname: my-rabbit
+#    ports:
+#      - "5672:5672"   # AMQP端口
+#      - "15672:15672" # 管理界面端口
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    restart: always
+    networks:
+      - jiwu-network
+
+  # Redis服务
+  redis:
+    image: redis:6.2
+    container_name: jiwu-redis
+#    ports:
+#      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    networks:
+      - jiwu-network
+
+volumes:
+  mysql-data:
+  rabbitmq-data:
+  redis-data:
+
+networks:
+  jiwu-network:
+    driver: bridge

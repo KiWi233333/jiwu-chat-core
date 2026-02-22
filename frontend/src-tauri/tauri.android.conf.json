@@ -1,0 +1,17 @@
+{
+  "plugins": {
+    "deep-link": {
+      "mobile": [
+        {
+          "scheme": ["jiwuchat"],
+          "appLink": false
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "android": {
+      "minSdkVersion": 24
+    }
+  }
+}

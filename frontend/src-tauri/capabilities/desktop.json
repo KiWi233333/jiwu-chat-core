@@ -1,0 +1,150 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-capability",
+  "description": "Capability for the main window",
+  "local": true,
+  "windows": ["*"],
+  "webviews": [],
+  "platforms": ["macOS", "windows", "linux"],
+  "remote": {
+    "urls": ["https://*.kiwi2333.top", "https://*.kiwi233.top"]
+  },
+  "permissions": [
+    "deep-link:default",
+    "deep-link:allow-get-current",
+    "deep-link:allow-register",
+    "deep-link:allow-unregister",
+    "deep-link:allow-is-registered",
+
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download",
+    "updater:allow-install",
+    "updater:allow-download-and-install",
+
+    "autostart:default",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled",
+
+    "opener:allow-default-urls",
+    "opener:allow-open-path",
+    "opener:allow-open-url",
+    "opener:allow-reveal-item-in-dir",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "**"
+        },
+        {
+          "url": "http*://*"
+        },
+        {
+          "url": "cursor*://*"
+        },
+        {
+          "url": "cherrystudio*://*"
+        },
+        {
+          "url": "file*://*"
+        },
+        {
+          "url": "tauri:*"
+        },
+        {
+          "url": "anysphere*://*"
+        }
+      ]
+    },
+
+    "core:default",
+    "core:window:allow-close",
+    "core:window:allow-center",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:window:allow-hide",
+    "core:window:allow-destroy",
+    "core:window:allow-is-enabled",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-is-closable",
+    "core:window:allow-is-minimizable",
+    "core:window:allow-is-maximizable",
+    "core:window:allow-is-resizable",
+    "core:window:allow-is-maximized",
+    "core:window:allow-is-visible",
+    "core:window:allow-get-all-windows",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-unmaximize",
+    "core:window:allow-unminimize",
+    "core:window:allow-set-title",
+    "core:window:allow-set-icon",
+    "core:window:allow-set-resizable",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-size",
+    "core:window:allow-set-min-size",
+    "core:window:allow-set-max-size",
+    "core:window:allow-inner-position",
+    "core:window:allow-inner-size",
+    "core:window:allow-set-decorations",
+    "core:window:allow-show",
+    "core:window:allow-set-shadow",
+    "core:window:allow-is-decorated",
+    "core:window:allow-set-closable",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-position",
+    "core:window:allow-set-always-on-bottom",
+    "core:window:allow-create",
+    "core:window:allow-available-monitors",
+    "core:window:allow-current-monitor",
+    "core:window:allow-cursor-position",
+    "core:window:allow-internal-toggle-maximize",
+    "core:window:allow-is-focused",
+    "core:window:allow-is-minimized",
+    "core:window:allow-monitor-from-point",
+    "core:window:allow-outer-position",
+    "core:window:allow-outer-size",
+    "core:window:allow-primary-monitor",
+    "core:window:allow-request-user-attention",
+    "core:window:allow-scale-factor",
+    "core:window:allow-set-background-color",
+    "core:window:allow-set-badge-count",
+    "core:window:allow-set-badge-label",
+    "core:window:allow-set-content-protected",
+    "core:window:allow-set-cursor-grab",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging",
+    "core:window:allow-title",
+    "core:window:allow-set-cursor-icon",
+    "core:window:allow-set-cursor-position",
+    "core:window:allow-set-cursor-visible",
+    "core:window:allow-set-effects",
+    "core:window:allow-set-enabled",
+    "core:window:allow-set-ignore-cursor-events",
+    "core:window:allow-set-maximizable",
+    "core:window:allow-set-minimizable",
+    "core:window:allow-set-overlay-icon",
+    "core:window:allow-set-progress-bar",
+    "core:window:allow-set-size-constraints",
+    "core:window:allow-set-skip-taskbar",
+    "core:window:allow-set-theme",
+    "core:window:allow-set-title-bar-style",
+    "core:window:allow-set-visible-on-all-workspaces",
+    "core:window:allow-theme",
+
+    "core:webview:allow-create-webview",
+    "core:webview:allow-create-webview-window",
+
+    "process:default",
+    "process:allow-restart",
+    "process:allow-exit",
+
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-image",
+    "clipboard-manager:allow-read-image",
+    "clipboard-manager:allow-write-html",
+    "clipboard-manager:allow-clear"
+  ]
+}
