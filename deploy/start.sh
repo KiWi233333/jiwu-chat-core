@@ -19,7 +19,9 @@ if [ ! -f .env ]; then
   exit 0
 fi
 
-echo ">>> 拉取并启动服务..."
+echo ">>> 拉取镜像..."
+docker compose pull
+echo ">>> 部署（启动服务）..."
 if ! docker compose up -d; then
   echo ""
   echo "若拉取失败，可设置 .env 中 DOCKER_REGISTRY=镜像加速地址（如 docker.1ms.run）后重试。"

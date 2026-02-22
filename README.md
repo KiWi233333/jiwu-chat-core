@@ -2,9 +2,9 @@
   <img src="frontend/.doc/jiwuchat-tauri.png" width="120" alt="JiwuChat" />
 </p>
 
-<p align="center">
+<h3 align="center">
   <strong>JiwuChat - 极物聊天</strong>
-</p>
+</h3>
 
 <p align="center">
   <a href="./frontend/README.md">前端文档</a> ·
@@ -44,10 +44,10 @@
 
 ## 默认账号
 
-| 项目     | 说明                                  |
-| -------- | ------------------------------------- |
-| 账号     | `superAdmin`                             |
-| 密码     | `123456`                              |
+| 项目 | 说明         |
+| ---- | ------------ |
+| 账号 | `superAdmin` |
+| 密码 | `123456`     |
 
 ---
 
@@ -83,9 +83,33 @@ jiwu-chat-core/
 
 ## 快速开始
 
-### 一、Docker 一键启动（推荐）
+### 一、使用预构建镜像（推荐新用户）
 
-无需本地安装 MySQL / Redis / RabbitMQ / JDK / Node，一条命令启动完整系统：
+需已安装 [Docker](https://docs.docker.com/get-docker/) 与 Docker Compose。镜像见 [GitHub Packages](https://github.com/KiWi233333/jiwu-chat-core/pkgs/container/jiwu-chat-core)。
+
+**1. 拉取镜像**
+
+```bash
+docker pull ghcr.io/kiwi233333/jiwu-chat-core:latest
+```
+
+**2. 创建配置（含 .env）**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KiWi233333/jiwu-chat-core/main/deploy/install.sh | bash -s latest
+```
+
+**3. 部署**
+
+```bash
+cd jiwu-chat-docker && docker compose up -d
+```
+
+等待约 1–2 分钟（MySQL 初始化）后访问：前端 http://localhost:3000 · API http://localhost:9090 · 文档 http://localhost:9090/doc.html。默认账号 `superAdmin` / `123456`。
+
+### 二、Docker 一键启动（从源码构建，推荐开发）
+
+无需本地安装 MySQL / Redis / RabbitMQ / JDK / Node，在项目根目录从源码构建并启动完整系统：
 
 ```bash
 # 在项目根目录执行（首次会构建镜像，约 5–15 分钟）
@@ -97,16 +121,16 @@ docker compose up -d --build
 
 启动后可访问：
 
-| 服务       | 地址                           |
-| ---------- | ------------------------------ |
-| 前端       | http://localhost:3000（npx serve .output/public） |
-| 后端 API   | http://localhost:9090          |
-| API 文档   | http://localhost:9090/doc.html |
-| WebSocket  | ws://localhost:9091/ws         |
+| 服务      | 地址                                              |
+| --------- | ------------------------------------------------- |
+| 前端      | http://localhost:3000（npx serve .output/public） |
+| 后端 API  | http://localhost:9090                             |
+| API 文档  | http://localhost:9090/doc.html                    |
+| WebSocket | ws://localhost:9091/ws                            |
 
 默认体验账号：`ikun233` / `123456`。停止服务：`docker compose down`。详细说明见 [DOCKER.md](DOCKER.md)；前后端可配置项见 [CONFIG.md](CONFIG.md)（根目录 `.env`）。
 
-### 二、环境要求概览（本地开发）
+### 三、环境要求概览（本地开发）
 
 | 端   | 要求                                                                                          |
 | ---- | --------------------------------------------------------------------------------------------- |
