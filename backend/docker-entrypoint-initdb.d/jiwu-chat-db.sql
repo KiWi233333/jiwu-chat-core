@@ -384,15 +384,6 @@ VALUES ('1811752663585009665', '资源', 'res', NULL, 1, 1, '', 98, '2024-07-12 
         'i-solar:library-line-duotone', 'i-solar:library-bold-duotone');
 INSERT INTO `sys_menu` (`id`, `name`, `code`, `parent_id`, `type`, `sys_type`, `link_url`, `sort_order`, `create_time`,
                         `update_time`, `component_path`, `icon`, `on_icon`)
-VALUES ('1895161541196709890', 'AI模块', 'ai', NULL, 1, 1, '', 98, '2025-02-28 01:18:16', '2025-02-28 01:19:39', NULL,
-        'i-ri:color-filter-ai-line', 'i-ri:color-filter-ai-fill');
-INSERT INTO `sys_menu` (`id`, `name`, `code`, `parent_id`, `type`, `sys_type`, `link_url`, `sort_order`, `create_time`,
-                        `update_time`, `component_path`, `icon`, `on_icon`)
-VALUES ('1895161852346957825', '机器人管理', 'ai:robot', '1895161541196709890', 1, 1, '/ai/robot', 99,
-        '2025-02-28 01:19:31', '2025-02-28 01:19:31', '@/views/ai/RobotView.vue', 'i-ri:robot-2-line',
-        'i-ri:robot-2-fill');
-INSERT INTO `sys_menu` (`id`, `name`, `code`, `parent_id`, `type`, `sys_type`, `link_url`, `sort_order`, `create_time`,
-                        `update_time`, `component_path`, `icon`, `on_icon`)
 VALUES ('2709640055336398850', '首页', 'home', NULL, 1, 1, '/home', 99, '2023-10-16 03:00:53', '2024-05-24 23:40:24',
         '@/views/IndexView.vue', 'i-solar:home-2-outline', 'i-solar:home-2-bold');
 INSERT INTO `sys_menu` (`id`, `name`, `code`, `parent_id`, `type`, `sys_type`, `link_url`, `sort_order`, `create_time`,
@@ -777,21 +768,6 @@ INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creat
 VALUES ('1891252819399446530', NULL, 'chat/user/friend/apply', '申请好友（包括申请机器人）', '好友模块', 'SUPER_ADMIN',
         '2025-02-17 06:26:25', '2025-02-16 22:26:24');
 INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
-VALUES ('1906759850713571330', NULL, 'admin:ai:model:code', '获取可选模型列表（管理员）', '获取可选模型列表',
-        'SUPER_ADMIN', '2025-04-01 01:25:49', '2025-04-01 01:25:48');
-INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
-VALUES ('1906759850713571331', NULL, 'admin:ai:robot:update', '修改机器人（管理员）', '修改机器人', 'SUPER_ADMIN',
-        '2025-04-01 01:25:49', '2025-04-01 01:25:48');
-INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
-VALUES ('1906759850713571332', NULL, 'admin:ai:robot:delete', '删除机器人（管理员）', '删除机器人', 'SUPER_ADMIN',
-        '2025-04-01 01:25:49', '2025-04-01 01:25:48');
-INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
-VALUES ('1906759850713571333', NULL, 'admin:ai:model:list', '获取模型列表（+余额）(管理员)',
-        '获取模型列表（+余额）(管理员)，可定时调用', 'SUPER_ADMIN', '2025-04-01 01:25:49', '2025-04-01 01:25:48');
-INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
-VALUES ('1906759850713571334', NULL, 'admin:ai:robot:add', '添加机器人（管理员）', '添加机器人', 'SUPER_ADMIN',
-        '2025-04-01 01:25:49', '2025-04-01 01:25:48');
-INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
 VALUES ('1906759850713571335', NULL, 'res:utils:translation:sse', '流式翻译文本(sse)', '用户消费者翻译文本(sse)',
         'SUPER_ADMIN', '2025-04-01 01:25:49', '2025-04-01 01:25:48');
 INSERT INTO `sys_permission` (`id`, `parent_id`, `code`, `name`, `intro`, `creator`, `create_time`, `update_time`)
@@ -1020,12 +996,6 @@ INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time
 VALUES ('1895161961143009308', '5819236053864939521', '1725323795416457217', '100001', '2025-02-28 01:19:57',
         '2025-02-28 01:19:56');
 INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1895161961143009309', '5819236053864939521', '1895161541196709890', '100001', '2025-02-28 01:19:57',
-        '2025-02-28 01:19:56');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1895161961143009310', '5819236053864939521', '1895161852346957825', '100001', '2025-02-28 01:19:57',
-        '2025-02-28 01:19:56');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
 VALUES ('1991559166730764289', '1709642621461942274', '2709640055336398850', '100001', '2025-11-21 01:28:01',
         '2025-11-21 01:28:01');
 INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
@@ -1093,12 +1063,6 @@ VALUES ('1991559166734958607', '1709642621461942274', '5339640055336398843', '10
         '2025-11-21 01:28:01');
 INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
 VALUES ('1991559166734958608', '1709642621461942274', '53396400553363988434', '100001', '2025-11-21 01:28:01',
-        '2025-11-21 01:28:01');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1991559166734958609', '1709642621461942274', '1895161541196709890', '100001', '2025-11-21 01:28:01',
-        '2025-11-21 01:28:01');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1991559166734958610', '1709642621461942274', '1895161852346957825', '100001', '2025-11-21 01:28:01',
         '2025-11-21 01:28:01');
 INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`, `creator`, `create_time`, `update_time`)
 VALUES ('1991559166734958611', '1709642621461942274', '1811752663585009665', '100001', '2025-11-21 01:28:01',
@@ -1318,12 +1282,6 @@ VALUES ('1991695870468886538', 1709642621461942274, 1726670680191299633, '100001
         '2025-11-21 10:31:14');
 INSERT INTO `sys_role_permission` (`id`, `role_id`, `permission_id`, `creator`, `create_time`, `update_time`)
 VALUES ('1991695870468886539', 1709642621461942274, 1726670680191299614, '100001', '2025-11-21 10:31:14',
-        '2025-11-21 10:31:14');
-INSERT INTO `sys_role_permission` (`id`, `role_id`, `permission_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1991695870468886540', 1709642621461942274, 1906759850713571333, '100001', '2025-11-21 10:31:14',
-        '2025-11-21 10:31:14');
-INSERT INTO `sys_role_permission` (`id`, `role_id`, `permission_id`, `creator`, `create_time`, `update_time`)
-VALUES ('1991695870468886541', 1709642621461942274, 1906759850713571330, '100001', '2025-11-21 10:31:14',
         '2025-11-21 10:31:14');
 INSERT INTO `sys_role_permission` (`id`, `role_id`, `permission_id`, `creator`, `create_time`, `update_time`)
 VALUES ('1991695870468886542', 1709642621461942274, 1726670680191299660, '100001', '2025-11-21 10:31:14',

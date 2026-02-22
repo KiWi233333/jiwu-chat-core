@@ -631,7 +631,17 @@ ${colors.reset}`);
       }
 
       log.step("正在更新版本号...");
-      await this.executeScript("update-version.js", [newVersion]);
+      const updateVersionScript = path.join(this.projectRoot, "scripts", "update-version.js");
+      if (fs.existsSync(updateVersionScript)) {
+        await this.executeScript("update-version.js", [newVersion]);
+      }
+      else {
+        log.warning("update-version.js 不存在，使用 npm version 更新");
+        execSync(`npm version ${newVersion} --no-git-tag-version`, {
+          cwd: this.projectRoot,
+          stdio: "inherit",
+        });
+      }
       log.success(`版本已更新到 ${newVersion}`);
     }
     catch (error) {
