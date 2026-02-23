@@ -78,6 +78,7 @@ jiwu-chat-core/
 - 前端详细说明（技术栈、开发、截图、多语言）：[frontend/README.md](frontend/README.md)
 - 后端详细说明（模块、接口、环境变量、部署）：[backend/README.md](backend/README.md)
 - 前端运行与调试：[frontend/Run.md](frontend/Run.md)
+- **致谢**：[MallChat](https://github.com/zongzibinbin/MallChat)、Tauri、Nuxt、Vue、Spring Boot、MyBatis Plus、Netty、Knife4j 等开源项目。
 
 ---
 
@@ -285,4 +286,3 @@ macOS 安装时若提示“安装包已损坏”或证书相关，可按以下�
 - 邮箱：[kiwi2333@qq.com](mailto:kiwi2333@qq.com)
 - QQ：[1329634286](https://wpa.qq.com/msgrd?v=3&uin=1329634286&site=qqq&menu=yes)
 - QQ 群：[939204073](https://qm.qq.com/q/iSaETNVdKw)
-- 致谢：Tauri、Nuxt、Vue、Spring Boot、MyBatis Plus、Netty、Knife4j 等开源项目。
