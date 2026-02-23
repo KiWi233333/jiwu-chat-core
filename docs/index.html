@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JiwuChat — 部署配置器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design tokens ─── */
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --surface-2: #f4f4f3;
+      --border: #e4e4e2;
+      --border-strong: #c4c4c0;
+      --fg: #1a1a18;
+      --fg-muted: #6b6b68;
+      --fg-subtle: #9b9b98;
+      --accent: #1a1a18;
+      --accent-fg: #ffffff;
+      --accent-hover: #2d2d2a;
+      --success: #166534;
+      --success-bg: #f0fdf4;
+      --warning: #92400e;
+      --warning-bg: #fffbeb;
+      --code-bg: #f4f4f3;
+      --code-fg: #1a1a18;
+      --code-var: #0369a1;
+      --code-val: #166534;
+      --code-comment: #9b9b98;
+      --radius: 6px;
+      --radius-lg: 10px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+      --shadow: 0 2px 8px rgba(0,0,0,.08);
+      --font-sans: 'Instrument Sans', -apple-system, system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+    }
+
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--fg);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── Layout ─── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      gap: 0 40px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; padding: 0 16px; }
+      .preview-col { display: none; }
+    }
+
+    /* ─── Header ─── */
+    header {
+      grid-column: 1 / -1;
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .header-left {}
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -.5px;
+      flex-shrink: 0;
+    }
+    .logo-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+    }
+    header h1 {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--fg-muted);
+      letter-spacing: 0;
+    }
+    .header-links {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--fg-muted);
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .link-btn:hover { border-color: var(--border-strong); color: var(--fg); }
+    .link-btn svg { flex-shrink: 0; }
+
+    /* ─── Form column ─── */
+    .form-col { grid-column: 1; padding-bottom: 80px; }
+
+    /* ─── Section card ─── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background .12s;
+    }
+    .section-header:hover { background: var(--surface-2); }
+    .section-header.no-toggle { cursor: default; }
+    .section-header.no-toggle:hover { background: var(--surface); }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-icon {
+      width: 30px; height: 30px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .section-label {
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: -.2px;
+    }
+    .section-desc {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-top: 1px;
+    }
+    .section-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+    }
+    .section-badge.optional { color: var(--fg-subtle); }
+    .chevron {
+      transition: transform .2s;
+      color: var(--fg-subtle);
+    }
+    .chevron.open { transform: rotate(180deg); }
+    .section-body {
+      padding: 0 20px 20px;
+      display: grid;
+      gap: 14px;
+    }
+    .section-body.collapsed { display: none; }
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 0 4px;
+    }
+
+    /* ─── Mode selector ─── */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mode-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .mode-card:hover { border-color: var(--border-strong); }
+    .mode-card.active {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 4%, white);
+    }
+    .mode-card input[type=radio] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .mode-check {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+      transition: border-color .15s, background .15s;
+    }
+    .mode-card.active .mode-check {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .mode-check-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .mode-card.active .mode-check-dot { opacity: 1; }
+    .mode-card-title { font-weight: 500; font-size: 13px; margin-bottom: 3px; }
+    .mode-card-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
+
+    /* ─── Field ─── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    label {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--fg);
+      letter-spacing: -.1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    label .opt-tag {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--fg-subtle);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0 5px;
+      letter-spacing: 0;
+    }
+    .field-hint {
+      font-size: 11.5px;
+      color: var(--fg-muted);
+      margin-top: -3px;
+    }
+    input[type=text], input[type=number], input[type=password], select {
+      width: 100%;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+    input[type=text]:focus, input[type=number]:focus, input[type=password]:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+    input[type=text]::placeholder, input[type=number]::placeholder { color: var(--fg-subtle); }
+    input.monospace {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b68' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    /* ─── Preview column ─── */
+    .preview-col {
+      grid-column: 2;
+      padding-top: 0;
+      padding-bottom: 80px;
+    }
+    .preview-sticky {
+      position: sticky;
+      top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100vh - 64px);
+    }
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .preview-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--fg-muted);
+    }
+    .preview-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 11.5px;
+      font-family: var(--font-sans);
+      background: var(--surface);
+      color: var(--fg-muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .copy-btn:hover { border-color: var(--border-strong); color: var(--fg); background: var(--surface-2); }
+    .copy-btn.copied { border-color: #86efac; background: var(--success-bg); color: var(--success); }
+    .code-scroll {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+    pre {
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .env-preview { max-height: 380px; }
+    .cmd-preview { max-height: 160px; }
+    /* Syntax highlight */
+    .tk-comment { color: var(--fg-subtle); font-style: italic; }
+    .tk-key { color: #0369a1; }
+    .tk-eq { color: var(--fg-subtle); }
+    .tk-val { color: #166534; }
+    .tk-empty { color: var(--fg-subtle); }
+    .tk-section { color: var(--fg-muted); font-style: italic; }
+    .tk-cmd { color: #0369a1; }
+    .tk-flag { color: var(--warning); }
+
+    /* ─── Footer note ─── */
+    .info-note {
+      background: var(--warning-bg);
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 12.5px;
+      color: var(--warning);
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .info-note svg { flex-shrink: 0; margin-top: 1px; }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--fg-muted);
+    }
+    .step-num {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      flex-shrink: 0;
+      color: var(--fg);
+    }
+    .step-item code {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--fg);
+    }
+
+    /* Separator */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--fg-subtle);
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Inline cmd block */
+    .cmd-inline {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--code-var);
+    }
+    .cmd-inline .copy-btn { flex-shrink: 0; }
+
+    /* Mobile bottom panel */
+    .mobile-preview {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      padding: 12px 16px;
+    }
+    @media (max-width: 900px) {
+      .mobile-preview { display: block; }
+    }
+    .mobile-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--fg);
+    }
+    .mobile-sheet {
+      display: none;
+      max-height: 70vh;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+    .mobile-sheet.open { display: block; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">JW</div>
+        <span class="logo-name">JiwuChat</span>
+      </div>
+      <h1>Docker 部署配置生成器 · 填写参数，一键复制启动命令</h1>
+    </div>
+    <div class="header-links">
+      <a href="https://github.com/KiWi233333/jiwu-chat-core" target="_blank" class="link-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.749 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </a>
+      <a href="https://github.com/KiWi233333/jiwu-chat-core/blob/main/CONFIG.md" target="_blank" class="link-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        CONFIG.md
+      </a>
+    </div>
+  </header>
+
+  <!-- ── Form column ── -->
+  <div class="form-col">
+
+    <!-- 1. Deploy Mode -->
+    <div class="section">
+      <div class="section-header no-toggle">
+        <div class="section-title">
+          <div class="section-icon">🚀</div>
+          <div>
+            <div class="section-label">部署方式</div>
+            <div class="section-desc">选择如何获取应用镜像</div>
+          </div>
+        </div>
+        <span class="section-badge">必填</span>
+      </div>
+      <div class="section-body">
+        <div class="section-divider"></div>
+        <div class="mode-selector">
+          <label class="mode-card active" id="mode-image-card" onclick="setMode('image')">
+            <input type="radio" name="deploy_mode" value="image" checked />
+            <div class="mode-check"><div class="mode-check-dot"></div></div>
+            <div class="mode-card-title">镜像部署</div>
+            <div class="mode-card-desc">直接拉取预构建镜像，适合生产环境快速部署</div>
+          </label>
+          <label class="mode-card" id="mode-build-card" onclick="setMode('build')">
+            <input type="radio" name="deploy_mode" value="build" />
+            <div class="mode-check"><div class="mode-check-dot"></div></div>
+            <div class="mode-card-title">源码构建</div>
+            <div class="mode-card-desc">本地构建 Docker 镜像，适合自定义前端 API 地址</div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Basic -->
+    <div class="section">
+      <div class="section-header no-toggle">
+        <div class="section-title">
+          <div class="section-icon">⚙️</div>
+          <div>
+            <div class="section-label">基础配置</div>
+            <div class="section-desc">镜像版本、端口与 Docker 镜像加速</div>
+          </div>
+        </div>
+        <span class="section-badge">必填</span>
+      </div>
+      <div class="section-body">
+        <div class="section-divider"></div>
+
+        <!-- Image mode fields -->
+        <div id="field-image-block">
+          <div class="field">
+            <label for="JIWU_CHAT_IMAGE">镜像地址</label>
+            <input type="text" id="JIWU_CHAT_IMAGE" class="monospace"
+              value="ghcr.io/KiWi233333/jiwu-chat:latest"
+              placeholder="ghcr.io/KiWi233333/jiwu-chat:latest"
+              oninput="update()" />
+            <p class="field-hint">完整镜像名称，可指定版本 tag，如 <code style="font-family:var(--font-mono);font-size:11px;background:var(--code-bg);border:1px solid var(--border);border-radius:3px;padding:0 4px">:v1.8.2</code></p>
+          </div>
+        </div>
+
+        <!-- Build mode fields -->
+        <div id="field-vite-block" style="display:none; display: contents;">
+          <div class="field" id="field-vite-api">
+            <label for="VITE_API_BASE_URL">后端 API 地址 <span class="opt-tag">构建时注入</span></label>
+            <input type="text" id="VITE_API_BASE_URL" class="monospace"
+              value="http://localhost:9090/"
+              placeholder="http://your-domain.com:9090/"
+              oninput="update()" />
+            <p class="field-hint">用户访问的真实域名或 IP，若有 Nginx 反代请填写反代后的地址</p>
+          </div>
+          <div class="field" id="field-vite-ws">
+            <label for="VITE_API_WS_BASE_URL">WebSocket 地址 <span class="opt-tag">构建时注入</span></label>
+            <input type="text" id="VITE_API_WS_BASE_URL" class="monospace"
+              value="ws://localhost:9091/ws"
+              placeholder="ws://your-domain.com:9091/ws"
+              oninput="update()" />
+          </div>
+          <div class="field" id="field-vite-oss">
+            <label for="VITE_BASE_OSS_PATH">OSS CDN 地址 <span class="opt-tag">可选</span></label>
+            <input type="text" id="VITE_BASE_OSS_PATH" class="monospace"
+              value=""
+              placeholder="https://oss.example.com/"
+              oninput="update()" />
+            <p class="field-hint">七牛 / 其他 CDN 静态资源前缀，不填则使用本地存储</p>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="WEB_PORT">前端端口</label>
+            <input type="number" id="WEB_PORT" value="3000" min="1" max="65535" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="API_HTTP_PORT">API HTTP 端口</label>
+            <input type="number" id="API_HTTP_PORT" value="9090" min="1" max="65535" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="API_WS_PORT">WebSocket 端口</label>
+            <input type="number" id="API_WS_PORT" value="9091" min="1" max="65535" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="DOCKER_REGISTRY">Docker 镜像加速 <span class="opt-tag">可选</span></label>
+            <input type="text" id="DOCKER_REGISTRY" class="monospace"
+              value="docker.1ms.run"
+              placeholder="留空则直连 Docker Hub"
+              oninput="update()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Middleware -->
+    <div class="section">
+      <div class="section-header no-toggle">
+        <div class="section-title">
+          <div class="section-icon">🗄️</div>
+          <div>
+            <div class="section-label">中间件账号</div>
+            <div class="section-desc">MySQL · RabbitMQ 默认凭据</div>
+          </div>
+        </div>
+        <span class="section-badge">建议修改</span>
+      </div>
+      <div class="section-body">
+        <div class="section-divider"></div>
+        <div class="field">
+          <label for="MYSQL_ROOT_PASSWORD">MySQL root 密码</label>
+          <input type="text" id="MYSQL_ROOT_PASSWORD" class="monospace"
+            value="password"
+            placeholder="请设置强密码"
+            oninput="update()" />
+          <p class="field-hint">生产环境请务必修改为强密码</p>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="RABBITMQ_DEFAULT_USER">RabbitMQ 用户名</label>
+            <input type="text" id="RABBITMQ_DEFAULT_USER" class="monospace"
+              value="guest" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="RABBITMQ_DEFAULT_PASS">RabbitMQ 密码</label>
+            <input type="text" id="RABBITMQ_DEFAULT_PASS" class="monospace"
+              value="guest" oninput="update()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Mail (collapsible optional) -->
+    <div class="section">
+      <div class="section-header" id="hdr-mail" onclick="toggleSection('mail')">
+        <div class="section-title">
+          <div class="section-icon">📧</div>
+          <div>
+            <div class="section-label">邮件服务</div>
+            <div class="section-desc">用于注册验证码、通知等</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="section-badge optional">可选</span>
+          <svg class="chevron" id="chv-mail" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body collapsed" id="body-mail">
+        <div class="section-divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="MAIL_HOST">SMTP 主机</label>
+            <input type="text" id="MAIL_HOST" class="monospace" placeholder="smtp.qq.com" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="MAIL_PORT">SMTP 端口</label>
+            <input type="number" id="MAIL_PORT" value="" placeholder="465" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="MAIL_USERNAME">邮箱账号</label>
+            <input type="text" id="MAIL_USERNAME" class="monospace" placeholder="your@email.com" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="MAIL_PASSWORD">授权码 / 密码</label>
+            <input type="password" id="MAIL_PASSWORD" class="monospace" placeholder="••••••••" oninput="update()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Qiniu OSS -->
+    <div class="section">
+      <div class="section-header" onclick="toggleSection('qiniu')">
+        <div class="section-title">
+          <div class="section-icon">☁️</div>
+          <div>
+            <div class="section-label">七牛云存储</div>
+            <div class="section-desc">图片、文件上传至七牛 OSS</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="section-badge optional">可选</span>
+          <svg class="chevron" id="chv-qiniu" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body collapsed" id="body-qiniu">
+        <div class="section-divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="QINIU_ACCESS_KEY">Access Key</label>
+            <input type="text" id="QINIU_ACCESS_KEY" class="monospace" placeholder="AK…" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="QINIU_SECRET_KEY">Secret Key</label>
+            <input type="password" id="QINIU_SECRET_KEY" class="monospace" placeholder="SK…" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="QINIU_BUCKET">Bucket 名称</label>
+            <input type="text" id="QINIU_BUCKET" class="monospace" placeholder="my-bucket" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="QINIU_HOST">访问域名</label>
+            <input type="text" id="QINIU_HOST" class="monospace" placeholder="https://cdn.example.com" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="QINIU_SIGN_KEY">回调签名 Key</label>
+            <input type="text" id="QINIU_SIGN_KEY" class="monospace" placeholder="可选" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="QINIU_SIGN_KEY2">回调签名 Key2</label>
+            <input type="text" id="QINIU_SIGN_KEY2" class="monospace" placeholder="可选" oninput="update()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. UniSMS -->
+    <div class="section">
+      <div class="section-header" onclick="toggleSection('sms')">
+        <div class="section-title">
+          <div class="section-icon">💬</div>
+          <div>
+            <div class="section-label">短信服务 UniSMS</div>
+            <div class="section-desc">手机号验证码发送</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="section-badge optional">可选</span>
+          <svg class="chevron" id="chv-sms" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body collapsed" id="body-sms">
+        <div class="section-divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="UNISMS_ACCESS_KEY">Access Key</label>
+            <input type="text" id="UNISMS_ACCESS_KEY" class="monospace" placeholder="AK…" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="UNISMS_SECRET_KEY">Secret Key</label>
+            <input type="password" id="UNISMS_SECRET_KEY" class="monospace" placeholder="SK…" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="UNISMS_TEMPLATE_ID">短信模板 ID</label>
+            <input type="text" id="UNISMS_TEMPLATE_ID" class="monospace" placeholder="pub_verif_ttyl" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="UNISMS_SIGNATURE">签名</label>
+            <input type="text" id="UNISMS_SIGNATURE" class="monospace" placeholder="【签名】" oninput="update()" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="UNI_SMS_WEBHOOK_SIGNATURE_SECRET">Webhook 签名密钥 <span class="opt-tag">可选</span></label>
+          <input type="text" id="UNI_SMS_WEBHOOK_SIGNATURE_SECRET" class="monospace" placeholder="" oninput="update()" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Tencent Translation -->
+    <div class="section">
+      <div class="section-header" onclick="toggleSection('tencent')">
+        <div class="section-title">
+          <div class="section-icon">🌐</div>
+          <div>
+            <div class="section-label">腾讯云翻译</div>
+            <div class="section-desc">消息实时翻译功能</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="section-badge optional">可选</span>
+          <svg class="chevron" id="chv-tencent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body collapsed" id="body-tencent">
+        <div class="section-divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="TENCENT_SECRET_ID">SecretId</label>
+            <input type="text" id="TENCENT_SECRET_ID" class="monospace" placeholder="AKIDxxxxxxxx" oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="TENCENT_SECRET_KEY">SecretKey</label>
+            <input type="password" id="TENCENT_SECRET_KEY" class="monospace" placeholder="••••••••" oninput="update()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. AI Translation / MCP -->
+    <div class="section">
+      <div class="section-header" onclick="toggleSection('ai')">
+        <div class="section-title">
+          <div class="section-icon">🤖</div>
+          <div>
+            <div class="section-label">AI 翻译 / MCP</div>
+            <div class="section-desc">SiliconFlow 等 AI 接口 + MCP 服务鉴权</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="section-badge optional">可选</span>
+          <svg class="chevron" id="chv-ai" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body collapsed" id="body-ai">
+        <div class="section-divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="RES_TRANSLATION_API_URL">API Base URL</label>
+            <input type="text" id="RES_TRANSLATION_API_URL" class="monospace"
+              value="https://api.siliconflow.cn/v1"
+              placeholder="https://api.siliconflow.cn/v1"
+              oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="RES_TRANSLATION_API_KEY">API Key</label>
+            <input type="password" id="RES_TRANSLATION_API_KEY" class="monospace" placeholder="sk-…" oninput="update()" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="RES_TRANSLATION_MODEL">模型名称</label>
+            <input type="text" id="RES_TRANSLATION_MODEL" class="monospace"
+              value="Qwen/Qwen2.5-32B-Instruct"
+              oninput="update()" />
+          </div>
+          <div class="field">
+            <label for="RES_TRANSLATION_MAX_TOKENS">Max Tokens</label>
+            <input type="number" id="RES_TRANSLATION_MAX_TOKENS" value="4096" min="1" oninput="update()" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="MCP_ALLOWED_KEY">MCP 鉴权 Key <span class="opt-tag">可选</span></label>
+          <input type="text" id="MCP_ALLOWED_KEY" class="monospace" placeholder="自定义密钥" oninput="update()" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Quick Start Steps -->
+    <div class="section">
+      <div class="section-header no-toggle">
+        <div class="section-title">
+          <div class="section-icon">📋</div>
+          <div>
+            <div class="section-label">启动步骤</div>
+            <div class="section-desc">将配置应用到服务器</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="section-divider"></div>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>将右侧 <strong>.env 内容</strong> 复制，保存到服务器项目目录下，文件名为 <code>.env</code></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>复制右侧 <strong>启动命令</strong>，在项目目录下执行</div>
+          </div>
+          <div class="step-item" id="step-3-image" >
+            <div class="step-num">3</div>
+            <div>访问 <code id="web-url-display">http://your-ip:3000</code> 查看前端界面，默认测试账号 <code>ikun233</code> / <code>123456</code></div>
+          </div>
+        </div>
+        <div class="info-note" style="margin-top:4px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          首次启动会自动初始化数据库，请等待 MySQL 完全就绪后（约 30 秒）后端才会正常响应。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-col -->
+
+  <!-- ── Preview column ── -->
+  <div class="preview-col">
+    <div class="preview-sticky">
+
+      <!-- .env preview -->
+      <div class="preview-card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div class="preview-card-header">
+          <div class="preview-card-title">
+            <div class="preview-dot"></div>
+            <span style="font-family:var(--font-mono)">.env</span>
+            <span style="color:var(--fg-subtle);font-weight:400">— 配置文件内容</span>
+          </div>
+          <button class="copy-btn" id="copy-env-btn" onclick="copyEnv()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            复制
+          </button>
+        </div>
+        <div class="code-scroll env-preview" style="flex:1">
+          <pre id="env-output"></pre>
+        </div>
+      </div>
+
+      <!-- Docker command -->
+      <div class="preview-card">
+        <div class="preview-card-header">
+          <div class="preview-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <span>启动命令</span>
+          </div>
+          <button class="copy-btn" id="copy-cmd-btn" onclick="copyCmd()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            复制
+          </button>
+        </div>
+        <div class="code-scroll cmd-preview">
+          <pre id="cmd-output"></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<!-- Mobile preview toggle -->
+<div class="mobile-preview">
+  <button class="mobile-toggle" onclick="toggleMobileSheet()">
+    <span>查看生成的 .env 与启动命令</span>
+    <svg id="mobile-chv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <div class="mobile-sheet" id="mobile-sheet">
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px">
+      <div class="preview-card">
+        <div class="preview-card-header">
+          <div class="preview-card-title">
+            <div class="preview-dot"></div>
+            <span style="font-family:var(--font-mono)">.env</span>
+          </div>
+          <button class="copy-btn" onclick="copyEnv()">复制</button>
+        </div>
+        <div class="code-scroll" style="max-height:220px">
+          <pre id="env-output-mobile"></pre>
+        </div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-card-header">
+          <div class="preview-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <span>启动命令</span>
+          </div>
+          <button class="copy-btn" onclick="copyCmd()">复制</button>
+        </div>
+        <div class="code-scroll" style="max-height:100px">
+          <pre id="cmd-output-mobile"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  let mode = 'image'; // 'image' | 'build'
+
+  // ── Section toggle ──
+  function toggleSection(id) {
+    const body = document.getElementById('body-' + id);
+    const chv  = document.getElementById('chv-' + id);
+    if (!body) return;
+    const isCollapsed = body.classList.contains('collapsed');
+    body.classList.toggle('collapsed');
+    chv.classList.toggle('open', isCollapsed);
+  }
+
+  // ── Mode switch ──
+  function setMode(m) {
+    mode = m;
+    const imgCard   = document.getElementById('mode-image-card');
+    const buildCard = document.getElementById('mode-build-card');
+    const imgBlock  = document.getElementById('field-image-block');
+    const viteBlock = document.getElementById('field-vite-block');
+    // Show/hide fields
+    if (m === 'image') {
+      imgCard.classList.add('active');
+      buildCard.classList.remove('active');
+      imgBlock.style.display = '';
+      // hide vite fields
+      ['field-vite-api','field-vite-ws','field-vite-oss'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    } else {
+      buildCard.classList.add('active');
+      imgCard.classList.remove('active');
+      imgBlock.style.display = 'none';
+      ['field-vite-api','field-vite-ws','field-vite-oss'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    }
+    update();
+  }
+
+  // ── Helpers ──
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  // ── Generate .env content (plain text) ──
+  function generateEnv() {
+    const lines = [];
+    const line  = (k, v) => lines.push(`${k}=${v}`);
+    const optl  = (k, v) => { if (v) lines.push(`${k}=${v}`); };
+    const cmmt  = (s) => lines.push(s);
+
+    cmmt('# ============================================================');
+    cmmt('# JiwuChat 部署配置（由配置器生成）');
+    cmmt('# https://github.com/KiWi233333/jiwu-chat-core');
+    cmmt('# ============================================================');
+    cmmt('');
+
+    if (mode === 'image') {
+      cmmt('# ---------- 镜像 ----------');
+      line('JIWU_CHAT_IMAGE', val('JIWU_CHAT_IMAGE') || 'ghcr.io/KiWi233333/jiwu-chat:latest');
+      cmmt('');
+    }
+
+    cmmt('# ---------- Docker 与端口 ----------');
+    optl('DOCKER_REGISTRY', val('DOCKER_REGISTRY'));
+    line('WEB_PORT',      val('WEB_PORT')      || '3000');
+    line('API_HTTP_PORT', val('API_HTTP_PORT') || '9090');
+    line('API_WS_PORT',   val('API_WS_PORT')   || '9091');
+    cmmt('');
+
+    if (mode === 'build') {
+      cmmt('# ---------- 前端构建参数 ----------');
+      line('VITE_API_BASE_URL',    val('VITE_API_BASE_URL')    || 'http://localhost:9090/');
+      line('VITE_API_WS_BASE_URL', val('VITE_API_WS_BASE_URL') || 'ws://localhost:9091/ws');
+      optl('VITE_BASE_OSS_PATH',   val('VITE_BASE_OSS_PATH'));
+      cmmt('');
+    }
+
+    cmmt('# ---------- 中间件 ----------');
+    line('MYSQL_ROOT_PASSWORD',   val('MYSQL_ROOT_PASSWORD')   || 'password');
+    line('RABBITMQ_DEFAULT_USER', val('RABBITMQ_DEFAULT_USER') || 'guest');
+    line('RABBITMQ_DEFAULT_PASS', val('RABBITMQ_DEFAULT_PASS') || 'guest');
+
+    // Mail
+    const mailHost = val('MAIL_HOST');
+    if (mailHost) {
+      cmmt('');
+      cmmt('# ---------- 邮件服务 ----------');
+      line('MAIL_HOST',     mailHost);
+      optl('MAIL_PORT',     val('MAIL_PORT'));
+      optl('MAIL_USERNAME', val('MAIL_USERNAME'));
+      optl('MAIL_PASSWORD', val('MAIL_PASSWORD'));
+    }
+
+    // Qiniu
+    const qiniuAk = val('QINIU_ACCESS_KEY');
+    if (qiniuAk) {
+      cmmt('');
+      cmmt('# ---------- 七牛云存储 ----------');
+      line('QINIU_ACCESS_KEY', qiniuAk);
+      optl('QINIU_SECRET_KEY', val('QINIU_SECRET_KEY'));
+      optl('QINIU_BUCKET',     val('QINIU_BUCKET'));
+      optl('QINIU_HOST',       val('QINIU_HOST'));
+      optl('QINIU_SIGN_KEY',   val('QINIU_SIGN_KEY'));
+      optl('QINIU_SIGN_KEY2',  val('QINIU_SIGN_KEY2'));
+    }
+
+    // UniSMS
+    const smsAk = val('UNISMS_ACCESS_KEY');
+    if (smsAk) {
+      cmmt('');
+      cmmt('# ---------- 短信 UniSMS ----------');
+      line('UNISMS_ACCESS_KEY', smsAk);
+      optl('UNISMS_SECRET_KEY', val('UNISMS_SECRET_KEY'));
+      optl('UNISMS_TEMPLATE_ID', val('UNISMS_TEMPLATE_ID'));
+      optl('UNISMS_SIGNATURE',   val('UNISMS_SIGNATURE'));
+      optl('UNI_SMS_WEBHOOK_SIGNATURE_SECRET', val('UNI_SMS_WEBHOOK_SIGNATURE_SECRET'));
+    }
+
+    // Tencent
+    const tencentId = val('TENCENT_SECRET_ID');
+    if (tencentId) {
+      cmmt('');
+      cmmt('# ---------- 腾讯云翻译 ----------');
+      line('TENCENT_SECRET_ID',  tencentId);
+      optl('TENCENT_SECRET_KEY', val('TENCENT_SECRET_KEY'));
+    }
+
+    // AI Translation / MCP
+    const aiKey = val('RES_TRANSLATION_API_KEY');
+    const mcpKey = val('MCP_ALLOWED_KEY');
+    if (aiKey || mcpKey) {
+      cmmt('');
+      cmmt('# ---------- AI 翻译 / MCP ----------');
+      optl('RES_TRANSLATION_API_URL',    val('RES_TRANSLATION_API_URL'));
+      optl('RES_TRANSLATION_API_KEY',    aiKey);
+      optl('RES_TRANSLATION_MODEL',      val('RES_TRANSLATION_MODEL'));
+      optl('RES_TRANSLATION_MAX_TOKENS', val('RES_TRANSLATION_MAX_TOKENS'));
+      optl('MCP_ALLOWED_KEY',            mcpKey);
+    }
+
+    return lines.join('\n');
+  }
+
+  // ── Generate docker command ──
+  function generateCmd() {
+    if (mode === 'image') {
+      return 'docker compose up -d';
+    } else {
+      return 'docker compose up -d --build';
+    }
+  }
+
+  // ── Syntax highlight for .env ──
+  function highlight(text) {
+    return text
+      .split('\n')
+      .map(line => {
+        if (line.startsWith('#')) {
+          return `<span class="tk-comment">${esc(line)}</span>`;
+        }
+        if (line === '') return '';
+        const eqIdx = line.indexOf('=');
+        if (eqIdx === -1) return esc(line);
+        const key = line.slice(0, eqIdx);
+        const v   = line.slice(eqIdx + 1);
+        const valSpan = v === ''
+          ? `<span class="tk-empty">''</span>`
+          : `<span class="tk-val">${esc(v)}</span>`;
+        return `<span class="tk-key">${esc(key)}</span><span class="tk-eq">=</span>${valSpan}`;
+      })
+      .join('\n');
+  }
+
+  function highlightCmd(text) {
+    return text
+      .split('\n')
+      .map(line => {
+        // colorize flags and subcommands
+        return line
+          .replace(/^(docker|compose|docker compose)/g, '<span class="tk-cmd">$1</span>')
+          .replace(/(--\w[\w-]*)/g, '<span class="tk-flag">$1</span>')
+          .replace(/(-\w)/g, '<span class="tk-flag">$1</span>');
+      })
+      .join('\n');
+  }
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // ── Update preview ──
+  function update() {
+    const envText = generateEnv();
+    const cmdText = generateCmd();
+
+    // Desktop
+    const envEl = document.getElementById('env-output');
+    const cmdEl = document.getElementById('cmd-output');
+    if (envEl) envEl.innerHTML = highlight(envText);
+    if (cmdEl) cmdEl.innerHTML = highlightCmd(cmdText);
+
+    // Mobile
+    const envM = document.getElementById('env-output-mobile');
+    const cmdM = document.getElementById('cmd-output-mobile');
+    if (envM) envM.innerHTML = highlight(envText);
+    if (cmdM) cmdM.innerHTML = highlightCmd(cmdText);
+
+    // Update web URL display
+    const portEl = document.getElementById('web-url-display');
+    const webPort = val('WEB_PORT') || '3000';
+    if (portEl) portEl.textContent = `http://your-ip:${webPort}`;
+  }
+
+  // ── Copy to clipboard ──
+  async function copyText(text, btnId) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 已复制`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 复制`;
+        }, 2000);
+      }
+    } catch(e) {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+  }
+
+  function copyEnv() { copyText(generateEnv(), 'copy-env-btn'); }
+  function copyCmd() { copyText(generateCmd(), 'copy-cmd-btn'); }
+
+  // ── Mobile sheet ──
+  function toggleMobileSheet() {
+    const sheet = document.getElementById('mobile-sheet');
+    const chv = document.getElementById('mobile-chv');
+    const isOpen = sheet.classList.contains('open');
+    sheet.classList.toggle('open', !isOpen);
+    chv.style.transform = isOpen ? '' : 'rotate(180deg)';
+  }
+
+  // ── Init ──
+  setMode('image');
+  update();
+</script>
+</body>
+</html>

@@ -84,6 +84,9 @@ jiwu-chat-core/
 
 ## 快速开始
 
+> **🛠 在线配置器**：可视化填写环境变量、自动生成 `.env` 文件与完整启动命令 →
+> **[https://kiwi233333.github.io/jiwu-chat-core/](https://kiwi233333.github.io/jiwu-chat-core/)**
+
 ### 一、使用预构建镜像（推荐新用户）
 
 需已安装 [Docker](https://docs.docker.com/get-docker/) 与 Docker Compose。镜像见 [GitHub Packages](https://github.com/KiWi233333/jiwu-chat-core/pkgs/container/jiwu-chat-core)。
