@@ -1,0 +1,83 @@
+name: Build and Push Multi-Arch Docker Image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Target platforms (comma-separated)'
+        required: false
+        default: 'linux/amd64,linux/arm64'
+      vite_api_base_url:
+        description: 'Backend API base URL (overrides repository variable)'
+        required: false
+      vite_api_ws_base_url:
+        description: 'WebSocket base URL (overrides repository variable)'
+        required: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: kiwi233333/jiwu-chat-core
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # QEMU enables cross-platform emulation (required for arm64 on amd64 runners)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # BuildX is the extended Docker build engine with multi-platform support
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Auto-generate tags:
+      #   branch push → ghcr.io/.../jiwu-chat-core:main
+      #   v1.2.3 tag  → ghcr.io/.../jiwu-chat-core:1.2.3  +  :1.2  +  :latest
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: ${{ inputs.platforms || 'linux/amd64,linux/arm64' }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            DOCKER_REGISTRY=docker.io
+            VITE_API_BASE_URL=${{ inputs.vite_api_base_url || vars.VITE_API_BASE_URL || 'http://localhost:9090/' }}
+            VITE_API_WS_BASE_URL=${{ inputs.vite_api_ws_base_url || vars.VITE_API_WS_BASE_URL || 'ws://localhost:9091/ws' }}
+            VITE_BASE_OSS_PATH=${{ vars.VITE_BASE_OSS_PATH || '' }}
+          # GHA cache is scoped to branch, keeps layers between runs for faster rebuilds
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Disable provenance attestation to avoid an extra unknown/unknown entry
+          # in the manifest list (some Docker clients/compose versions mishandle it)
+          provenance: false
