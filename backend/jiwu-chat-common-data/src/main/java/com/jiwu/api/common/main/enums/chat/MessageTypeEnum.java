@@ -25,12 +25,9 @@ public enum MessageTypeEnum {
     VIDEO(6, "视频"),
     //    EMOJI(7, "表情"),
     SYSTEM(8, "系统消息"),
-    AI_CHAT(9, "AI会话"),
     DEL_MSG(10, "删除消息"),
     /** RTC 消息（开源版已移除能力，保留枚举兼容历史数据） */
     RTC_MSG(11, "RTC消息（语音、视频等）"),
-    /** AI 回复消息（开源版已移除能力，保留枚举兼容历史数据） */
-    AI_CHAT_REPLY(12, "AI回复消息"),
     GROUP_NOTICE(13, "群通知"), // 可在修改群公告后发出
     ;
 
@@ -48,7 +45,6 @@ public enum MessageTypeEnum {
         USER_SEND_MSG_TYPES.add(MessageTypeEnum.VIDEO.getType()); // 6 视频
 //        USER_SEND_MSG_TYPES.add(MessageTypeEnum.EMOJI.getType()); // 7 表情
 //        USER_SEND_MSG_TYPES.add(MessageTypeEnum.SYSTEM.getType()); // 8 系统 拉人等通知
-        // 开源版不支持 AI 聊天，不再允许发送 AI_CHAT
         USER_SEND_MSG_TYPES.add(MessageTypeEnum.DEL_MSG.getType());// 10 删除
         USER_SEND_MSG_TYPES.add(MessageTypeEnum.GROUP_NOTICE.getType());// 13 群通知
     }

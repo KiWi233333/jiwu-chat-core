@@ -31,11 +31,6 @@ public class MsgContentConstant {
      * 目前用于系统通知、群公告等
      */
     public static final int MAX_TEXT_SYSTEM_LENGTH = 1024 * 10;
-    /**
-     * AI消息内容最大长度
-     * 目前用于AI聊天等
-     */
-    public static final int MAX_TEXT_AI_LENGTH = 1024 * 8;
     public static final int MAX_TEXT_CALL_LENGTH = 512;
 
 
@@ -84,7 +79,6 @@ public class MsgContentConstant {
     // 获取消息类型与常量信息的映射
     public static Map<Integer, MsgConstantInfo> getMsgConstantInfoMap() {
         Map<Integer, MsgConstantInfo> map = new HashMap<>();
-        map.put(MessageTypeEnum.AI_CHAT.getType(), new MsgConstantInfo(MAX_TEXT_AI_LENGTH));
         map.put(MessageTypeEnum.SYSTEM.getType(), new MsgConstantInfo(MAX_TEXT_SYSTEM_LENGTH));
         map.put(MessageTypeEnum.GROUP_NOTICE.getType(), new MsgConstantInfo(MAX_TEXT_NOTIFY_LENGTH));
         map.put(MessageTypeEnum.TEXT.getType(), new MsgConstantInfo(MAX_TEXT_CONTENT_LENGTH));

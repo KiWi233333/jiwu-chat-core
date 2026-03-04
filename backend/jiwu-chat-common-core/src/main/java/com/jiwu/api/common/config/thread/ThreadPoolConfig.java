@@ -29,8 +29,6 @@ public class ThreadPoolConfig implements AsyncConfigurer, SecureInvokeConfigurer
     public static final String WS_EXECUTOR = "websocketExecutor";
 
 
-    public static final String AI_CHAT_EXECUTOR = "aiChatExecutor";
-
     @Override
     public Executor getAsyncExecutor() {
         return JiwuExecutor();
@@ -69,15 +67,4 @@ public class ThreadPoolConfig implements AsyncConfigurer, SecureInvokeConfigurer
         return executor;
     }
 
-    @Bean(AI_CHAT_EXECUTOR)
-    public ThreadPoolTaskExecutor chatAiExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(15);
-        executor.setThreadNamePrefix("ai-chat-executor-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());//满了直接丢弃，默认为不重要消息推送
-        executor.setThreadFactory(new MyThreadFactory(executor));
-        return executor;
-    }
 }

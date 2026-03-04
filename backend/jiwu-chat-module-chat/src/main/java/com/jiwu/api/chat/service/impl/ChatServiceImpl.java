@@ -280,9 +280,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     private boolean checkRecallOk(Integer type) {
-        return !MessageTypeEnum.AI_CHAT.getType().equals(type)
-                && !MessageTypeEnum.RTC_MSG.getType().equals(type)
-                && !MessageTypeEnum.AI_CHAT_REPLY.getType().equals(type);
+        return !MessageTypeEnum.RTC_MSG.getType().equals(type);
     }
 
 
