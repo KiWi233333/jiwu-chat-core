@@ -19,7 +19,7 @@
 ```bash
 cd <项目根目录>
 
-# 可选：根目录 .env 中的 VITE_* 会作为 build-arg 默认值，部署时仍可通过 .env 覆盖，无需为不同环境构建多次
+# 前端 API 地址无需在构建时传递，部署时通过容器环境变量配置即可（见 CONFIG.md）
 
 # 仅构建应用镜像（不启动其他服务）
 docker compose build jiwu-chat
@@ -30,8 +30,6 @@ docker compose build jiwu-chat
 ```bash
 docker build -f docker/Dockerfile \
   --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY:-docker.io} \
-  --build-arg VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:9090/} \
-  --build-arg VITE_API_WS_BASE_URL=${VITE_API_WS_BASE_URL:-ws://localhost:9091/} \
   -t jiwu-chat:latest .
 ```
 
@@ -133,7 +131,7 @@ docker push registry.cn-hangzhou.aliyuncs.com/你的命名空间/jiwu-chat:v1.0.
 若用户通过 **Nginx 反代** 或 **域名** 访问（非 localhost），只需在**部署目录**的 `.env` 中设置：
 
 - `VITE_API_BASE_URL=https://api.你的域名/`
-- `VITE_API_WS_BASE_URL=wss://api.你的域名/ws`
+- `VITE_API_WS_BASE_URL=wss://api.你的域名/`
 
 然后执行 `docker compose up -d` 重启容器即可生效，无需重新构建镜像。同一镜像可在不同环境用不同 `.env` 配置。
 

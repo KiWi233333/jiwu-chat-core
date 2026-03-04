@@ -9,6 +9,19 @@ OUT="$ROOT/dist-docker"
 NAME="jiwu-chat-core"
 VERSION="${1:-latest}"
 
+# 同步 Java 版本号到所有 pom.xml（跳过 latest）
+if [ "$VERSION" != "latest" ]; then
+  echo ">>> 同步 Java 版本号为 $VERSION ..."
+  BACKEND="$ROOT/backend"
+  # 父 POM 自身版本
+  perl -i -0pe "s|(<groupId>com\.jiwu</groupId>\s*<artifactId>jiwu-chat-api</artifactId>\s*<version>)[^<]*(</version>)|\${1}${VERSION}\${2}|" "$BACKEND/pom.xml"
+  # 所有子模块的 parent version
+  for pom in "$BACKEND"/jiwu-chat-*/pom.xml; do
+    perl -i -0pe "s|(<parent>\s*<groupId>com\.jiwu</groupId>\s*<artifactId>jiwu-chat-api</artifactId>\s*<version>)[^<]*(</version>)|\${1}${VERSION}\${2}|" "$pom"
+  done
+  echo "    已更新 $(ls "$BACKEND"/jiwu-chat-*/pom.xml | wc -l | tr -d ' ') 个子模块 + 父 POM"
+fi
+
 echo ">>> 准备发布包目录..."
 rm -rf "$OUT"
 mkdir -p "$OUT/$NAME"

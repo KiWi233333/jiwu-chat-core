@@ -55,7 +55,7 @@
 ## 常见场景
 
 - **本地/内网**：保持默认即可，前端 `http://localhost:9090/`、`ws://localhost:9091/`。
-- **对外部署（Nginx 反代）**：在 `.env` 中设 `VITE_API_BASE_URL=https://api.你的域名/`、`VITE_API_WS_BASE_URL=wss://api.你的域名/ws`，然后执行 `docker compose up -d` 重启容器即可。
+- **对外部署（Nginx 反代）**：在 `.env` 中设 `VITE_API_BASE_URL=https://api.你的域名/`、`VITE_API_WS_BASE_URL=wss://api.你的域名/`，然后执行 `docker compose up -d` 重启容器即可。
 - **启用七牛/短信/邮件**：在 `.env` 中填写对应变量，重启：`docker compose up -d`。
 
 ## 发布包（deploy/）用户

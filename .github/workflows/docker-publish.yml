@@ -4,13 +4,6 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
-    inputs:
-      vite_api_base_url:
-        description: 'Backend API base URL (overrides repository variable)'
-        required: false
-      vite_api_ws_base_url:
-        description: 'WebSocket base URL (overrides repository variable)'
-        required: false
 
 env:
   REGISTRY: ghcr.io
@@ -61,9 +54,6 @@ jobs:
           outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
           build-args: |
             DOCKER_REGISTRY=docker.io
-            VITE_API_BASE_URL=${{ inputs.vite_api_base_url || vars.VITE_API_BASE_URL || 'http://localhost:9090/' }}
-            VITE_API_WS_BASE_URL=${{ inputs.vite_api_ws_base_url || vars.VITE_API_WS_BASE_URL || 'ws://localhost:9091/' }}
-            VITE_BASE_OSS_PATH=${{ vars.VITE_BASE_OSS_PATH || '' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false

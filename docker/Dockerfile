@@ -8,18 +8,16 @@ WORKDIR /build
 COPY backend/ backend/
 RUN cd backend && mvn clean package -DskipTests -pl jiwu-chat-starter -am -q
 
-# 阶段二：前端 SSG（pnpm build:nuxt → .output/public），可通过 build-arg 覆盖
+# 阶段二：前端 SSG（pnpm build:nuxt → .output/public）
+# 构建时使用固定占位默认值；实际 API 地址在部署时由 serve-with-config.js 通过环境变量注入
 FROM ${DOCKER_REGISTRY}/library/node:22-alpine AS frontend
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 COPY frontend/ frontend/
 WORKDIR /app/frontend
-ARG VITE_API_BASE_URL=http://localhost:9090/
-ARG VITE_API_WS_BASE_URL=ws://localhost:9091/
-ARG VITE_BASE_OSS_PATH=
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-ENV VITE_API_WS_BASE_URL=$VITE_API_WS_BASE_URL
-ENV VITE_BASE_OSS_PATH=$VITE_BASE_OSS_PATH
+ENV VITE_API_BASE_URL=http://localhost:9090/
+ENV VITE_API_WS_BASE_URL=ws://localhost:9091/
+ENV VITE_BASE_OSS_PATH=
 ENV NUXT_PUBLIC_NODE_ENV=production
 ENV NUXT_PUBLIC_SPA=false
 ENV SKIP_CHECK_ENV=true
