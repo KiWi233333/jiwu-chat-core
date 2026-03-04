@@ -10,6 +10,8 @@ const route = useRoute();
 const user = useUserStore();
 const ws = useWsStore();
 const chat = useChatStore();
+const setting = useSettingStore();
+const { open: openExtendMenu } = useOpenExtendWind();
 const applyUnRead = ref(0);
 
 /**
@@ -71,6 +73,13 @@ const menuList = computed<MenuItem[]>(() => [
     icon: "i-ri:user-line !w-5 !h-6",
     activeIcon: "i-ri:user-fill !w-5 !h-6",
   },
+  ...(setting.selectExtendMenuList || []).map(p => ({
+    title: p.title,
+    icon: p.icon,
+    activeIcon: p.activeIcon,
+    loading: p.loading,
+    onClick: () => openExtendMenu(p),
+  }) as MenuItem),
   {
     title: "扩展",
     icon: "i-ri:apps-2-ai-line",
@@ -91,21 +100,27 @@ const activeMenu = computed({
 
 <template>
   <div
-    class="relative grid grid-cols-4 select-none justify-center bg-white shadow-md dark:bg-dark-8"
+    class="relative grid select-none justify-center bg-white shadow-md dark:bg-dark-8"
+    :style="{ gridTemplateColumns: `repeat(${menuList.length}, minmax(0, 1fr))` }"
   >
     <component
-      :is="p.children?.length ? 'div' : NuxtLink"
+      :is="p.path ? NuxtLink : 'div'"
       v-for="p in menuList"
-      :key="p.path"
+      :key="p.path || p.title"
       v-ripple="{ color: 'rgba(var(--el-color-primary-rgb), 0.1)', duration: 800 }"
-      v-bind="!p.children?.length ? { 'to': p.path, 'prefetch': true, 'prefetch-on': { visibility: true } } : {}"
+      v-loading="(p as any).loading"
+      v-bind="p.path ? { 'to': p.path, 'prefetch': true, 'prefetch-on': { visibility: true } } : {}"
       :index="p.path"
       class="item"
       :draggable="false"
       :class="{ active: activeMenu === p.path }"
-      @click.stop="() => {
+      @click="(e: MouseEvent) => {
         if (p.children?.length && p.path)
           activeMenu = p.path
+        if (p.onClick) {
+          e.stopPropagation();
+          p.onClick(e);
+        }
       }"
     >
       <el-badge
